@@ -1,0 +1,14 @@
+{
+    "appId": "com.t-pokorny.music-player",
+    "files": ["dist-electron", "dist-react"],
+    "mac": {
+        "target": "dmg"
+    },
+    "linux": {
+        "target": "AppImage",
+        "category": "Utility"
+    },
+    "windows": {
+        "target": ["portable", "msi"]
+    }
+}
