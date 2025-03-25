@@ -1,6 +1,7 @@
 {
     "appId": "com.t-pokorny.music-player",
     "files": ["dist-electron", "dist-react"],
+    "icon": "./icon.png",
     "mac": {
         "target": "dmg"
     },
