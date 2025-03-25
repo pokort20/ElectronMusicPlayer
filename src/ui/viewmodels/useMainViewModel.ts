@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef} from "react";
 
+
 export function useMainViewModel() {
   // --- State variables ---
   const [songName, setSongName] = useState("SongName");
@@ -79,6 +80,16 @@ export function useMainViewModel() {
  
   // --- Effects ---
   useEffect(() => {
+    const accountId = 1; // later from login
+    //@ts-ignore
+    window.api.loadPlaylists(accountId).then(setPlaylists);
+    //@ts-ignore
+    window.api.loadArtists(accountId).then(setArtists);
+    //@ts-ignore
+    window.api.loadPodcasts(accountId).then(setPodcasts);
+  }, []);
+  
+  useEffect(() => {
     if (!searchText) {
       setIsHomePageVisible(true);
       setIsTabControlVisible(false);
@@ -95,7 +106,7 @@ export function useMainViewModel() {
       previousVolume.current = volume;
     }
   }, [volume]);
-  
+
   useEffect(() => {
     // @ts-ignore
     window.electron.subVolume((v: number) => {

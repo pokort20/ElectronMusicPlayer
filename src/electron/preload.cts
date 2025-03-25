@@ -30,3 +30,21 @@ electron.contextBridge.exposeInMainWorld("electron", {
         })
     },
 });
+
+
+
+electron.contextBridge.exposeInMainWorld("api", {
+    loadPlaylists: (accountId: number) => {
+      console.log("PRELOAD:loadPlaylists", accountId);
+      return electron.ipcRenderer.invoke("load-playlists", accountId);
+    },
+    loadArtists: (accountId: number) => {
+      console.log("PRELOAD:loadArtists", accountId);
+      return electron.ipcRenderer.invoke("load-artists", accountId);
+    },
+    loadPodcasts: (accountId: number) => {
+      console.log("PRELOAD:loadPodcasts", accountId);
+      return electron.ipcRenderer.invoke("load-podcasts", accountId);
+    }
+  });
+  

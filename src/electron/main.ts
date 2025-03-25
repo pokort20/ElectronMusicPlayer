@@ -27,7 +27,7 @@ app.on("ready", () => {
   let isPlaying = false;
 
 
-//handles
+//electron handles
 ipcMain.handle("playSong", () => {
   isPlaying = !isPlaying;
   console.log("HANDLE:playSong");
@@ -60,5 +60,20 @@ ipcMain.handle("searchDB", (searchTerm) => {
   });
 });
  // array
+
+ //API handles
+ ipcMain.handle("load-playlists", async (_, accountId) => {
+  return await dataHandler.getPlaylistsByAccount(accountId);
+});
+
+ipcMain.handle("load-artists", async (_, accountId) => {
+  return await dataHandler.getArtistsByAccount(accountId);
+});
+
+ipcMain.handle("load-podcasts", async (_, accountId) => {
+  return await dataHandler.getPodcastsByAccount(accountId);
+});
   console.log(apppath);
 });
+
+
