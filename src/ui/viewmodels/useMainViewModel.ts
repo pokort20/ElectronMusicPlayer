@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef} from "react";
 
 export function useMainViewModel() {
   // --- State variables ---
@@ -8,13 +8,15 @@ export function useMainViewModel() {
   const [timeLeft, setTimeLeft] = useState("0:00");
   const [accountName, setAccountName] = useState("AccountName");
   const [searchText, setSearchText] = useState("");
-  const [volume, setVolume] = useState(2);
+  const [volume, setVolume] = useState<number>(1);
   const [songProgress, setSongProgress] = useState(0);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isHomePageVisible, setIsHomePageVisible] = useState(true);
   const [isTabControlVisible, setIsTabControlVisible] = useState(false);
   const [minSongProgress, setMinSongProgress] = useState(0);
   const [maxSongProgress, setMaxSongProgress] = useState(100);
+  var [isPlaying, setIsPlaying] = useState(false);
+  const previousVolume = useRef<number>(volume);
 
   // --- Collections ---
   const [songQueue, setSongQueue] = useState([]);
@@ -25,8 +27,23 @@ export function useMainViewModel() {
   const [podcasts, setPodcasts] = useState([]);
 
   // --- Command logic ---
+
+  
+  const changeVolume = useCallback((volume: number) => {
+    console.log("volume changed", volume);
+    //@ts-ignore
+    window.electron.changeVolume(volume);
+  }, []);
+  
   const playPauseCommand = useCallback(() => {
-    console.log("PlayPauseCommand not implemented");
+    //@ts-ignore
+    isPlaying = window.electron.playPause();
+    console.log("isPlaying: ", isPlaying);
+  }, []);
+  const playCommand = useCallback(() => {
+    //@ts-ignore
+    isPlaying = window.electron.playSong();
+    console.log("isPlaying: ", isPlaying);
   }, []);
 
   const nextCommand = useCallback(() => {
@@ -46,7 +63,8 @@ export function useMainViewModel() {
   }, []);
 
   const muteCommand = useCallback(() => {
-    console.log("MuteCommand not implemented");
+    //@ts-ignore
+    isPlaying = window.electron.mute();
   }, []);
 
   const homeCommand = useCallback(() => {
@@ -58,7 +76,7 @@ export function useMainViewModel() {
   const addPlaylistCommand = useCallback(() => {
     console.log("AddPlaylistCommand not implemented");
   }, []);
-
+ 
   // --- Effects ---
   useEffect(() => {
     if (!searchText) {
@@ -71,10 +89,32 @@ export function useMainViewModel() {
   }, [searchText]);
 
   useEffect(() => {
+    if (Math.abs(previousVolume.current - volume) > 0.001) {
+      console.log("volume: " + volume);
+      changeVolume(volume);
+      previousVolume.current = volume;
+    }
+  }, [volume]);
+  
+  useEffect(() => {
+    // @ts-ignore
+    window.electron.subVolume((v: number) => {
+      console.log("Renderer received volume update:", v);
+      setVolume(v);
+    });
+  }, []);
+  
+  useEffect(() => {
     // This would usually trigger a search API
     console.log("SearchText or TabIndex changed", searchText, selectedTabIndex);
   }, [searchText, selectedTabIndex]);
 
+
+  
+  // useEffect(() => {
+  //   //@ts-ignore
+  //   window.electron.subVolume((vol) => console.log("volume: ", vol));
+  // })
   // --- Expose everything ---
   return {
     songName,
@@ -102,6 +142,8 @@ export function useMainViewModel() {
     minSongProgress,
     setMinSongProgress,
     maxSongProgress,
+    isPlaying,
+    setIsPlaying,
     setMaxSongProgress,
     songQueue,
     setSongQueue,
@@ -117,6 +159,8 @@ export function useMainViewModel() {
     setPodcasts,
 
     // Commands
+    changeVolume,
+    playCommand,
     playPauseCommand,
     nextCommand,
     previousCommand,

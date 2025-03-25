@@ -1,4 +1,21 @@
 {
+  "compilerOptions": {
+    "types": ["./types.d.ts"],
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true, 
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+  },
   "files": [],
   "include": ["src"],
   "exclude": ["src/electron"],
@@ -7,3 +24,28 @@
     { "path": "./tsconfig.node.json" }
   ]
 }
+// {
+//   "compilerOptions": {
+//     "types": ["./types.d.ts"],
+//     "target": "ESNext",
+//     "useDefineForClassFields": true,
+//     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+//     "allowJs": false,
+//     "skipLibCheck": true,
+//     "esModuleInterop": false,
+//     "allowSyntheticDefaultImports": true, 
+//     "strict": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "module": "ESNext",
+//     "moduleResolution": "Node",
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "noEmit": true,
+//   },
+//   "files": [],
+//   "include": ["src"],
+//   "exclude": ["src/electron"],
+//   "references": [
+//     { "path": "./tsconfig.node.json" }
+//   ]
+// }
