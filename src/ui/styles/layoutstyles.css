@@ -1,3 +1,25 @@
+.grid {
+    display: grid;
+  }
+  .layout.main-view {
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    min-width: 800px;
+    min-height: 400px;
+    height: 100vh;
+    background: var(--ternary-bg);
+  }
+  .flex-grow {
+    flex: 1;
+  }
+  .dock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+   
 .border.song {
     border-radius: 10px;
     background: var(--primary-gradient);

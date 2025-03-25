@@ -2,15 +2,7 @@
 
 export default function MainView() {
     return (
-      <div
-        className="grid min-w-[800px] min-h-[400px]"
-        style={{
-          background: "var(--ternary-bg)",
-          display: "grid",
-          gridTemplateRows: "100px 1fr",
-          height: "100vh"
-        }}
-      >
+    <div className="layout main-view">
         {/* Navigation panel */}
         <div
           className="grid"
@@ -29,10 +21,8 @@ export default function MainView() {
               </button>
               <button className="button round">
                 <div className="stack leftH">
-                  <div style={{ width: 34, height: 34, borderRadius: 20 }}>
-                    <img width={22} height={22} src="/assets/Images/settings.png" />
-                  </div>
-                  <span className="label base">Settings</span>
+                <img width={22} height={22} src="/assets/Images/settings.png" />
+                <span className="label base">Settings</span>
                 </div>
               </button>
             </div>
@@ -43,7 +33,7 @@ export default function MainView() {
             <div className="grid" style={{ gridTemplateRows: "70px auto", height: "100%" }}>
               <div className="grid" style={{ gridTemplateColumns: "1fr 3fr 1fr" }}>
                 <div className="stack leftH">
-                  <img src="/assets/avalonia-logo.ico" />
+                  <img className="img song" src="/assets/Images/home.png"/>
                   <div className="stack leftV">
                     <span className="label base" style={{ fontSize: 20, marginTop: 18, marginBottom: -4 }}>SongName</span>
                     <span className="label base" style={{ fontSize: 13 }}>AuthorName</span>
@@ -70,7 +60,7 @@ export default function MainView() {
   
                 <div className="stack rightH">
                   <button className="button transparent">
-                    <img src="/assets/Images/volume.png" />
+                    <img src="/assets/Images/volume1.png" />
                   </button>
                   <input type="range" className="slider volume" />
                 </div>
@@ -106,11 +96,11 @@ export default function MainView() {
               </div>
   
               <div className="scroll" style={{ gridRow: 3 }}></div>
-              <span className="label baseH2" style={{ marginLeft: 20 }}>Artists</span>
+              <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Artists</span>
               <div className="scroll"></div>
-              <span className="label baseH2" style={{ marginLeft: 20 }}>Albums</span>
+              <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Albums</span>
               <div className="scroll"></div>
-              <span className="label baseH2" style={{ marginLeft: 20 }}>Podcasts</span>
+              <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Podcasts</span>
               <div className="scroll"></div>
             </div>
           </div>
@@ -125,7 +115,7 @@ export default function MainView() {
                 <button className="button circle">
                   <img src="/assets/Images/right_arrow.png" />
                 </button>
-                <input className="textbox base" placeholder="Search..." />
+                <input className="textbox base flex-grow" placeholder="Search..." />
                 <button className="button circle">
                   <img src="/assets/Images/home.png" />
                 </button>
@@ -138,11 +128,11 @@ export default function MainView() {
           <div className="border base">
             <div className="grid" style={{ gridTemplateRows: "1.5fr 1fr" }}>
               <div className="grid" style={{ gridTemplateRows: "auto 1fr" }}>
-                <span className="label baseH1" style={{ marginLeft: 5 }}>Queue</span>
+                <span className="label baseH1 dock" style={{ marginLeft: 5 }}>Queue</span>
                 <div className="scroll"></div>
               </div>
               <div className="grid" style={{ gridTemplateRows: "auto 1fr" }}>
-                <span className="label baseH1" style={{ marginLeft: 5 }}>Suggestions</span>
+                <span className="label baseH1 dock" style={{ marginLeft: 5 }}>Suggestions</span>
                 <div className="scroll"></div>
               </div>
             </div>
