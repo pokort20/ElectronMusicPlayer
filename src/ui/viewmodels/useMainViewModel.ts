@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef} from "react";
-
+import { Playlist, Artist, Podcast } from "../../electron/models/";
 
 export function useMainViewModel() {
   // --- State variables ---
@@ -22,10 +22,11 @@ export function useMainViewModel() {
   // --- Collections ---
   const [songQueue, setSongQueue] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [playlists, setPlaylists] = useState([]);
-  const [artists, setArtists] = useState([]);
   const [albums, setAlbums] = useState([]);
-  const [podcasts, setPodcasts] = useState([]);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+
 
   // --- Command logic ---
 
@@ -36,14 +37,14 @@ export function useMainViewModel() {
     window.electron.changeVolume(volume);
   }, []);
   
-  const playPauseCommand = useCallback(() => {
+  const playPauseCommand = useCallback(async () => {
     //@ts-ignore
-    isPlaying = window.electron.playPause();
+    isPlaying = await window.electron.playPause();
     console.log("isPlaying: ", isPlaying);
   }, []);
-  const playCommand = useCallback(() => {
+  const playCommand = useCallback(async () => {
     //@ts-ignore
-    isPlaying = window.electron.playSong();
+    isPlaying = await window.electron.playSong();
     console.log("isPlaying: ", isPlaying);
   }, []);
 
@@ -81,13 +82,19 @@ export function useMainViewModel() {
   // --- Effects ---
   useEffect(() => {
     const accountId = 1; // later from login
+    console.log("loading all data");
     //@ts-ignore
-    window.api.loadPlaylists(accountId).then(setPlaylists);
+    //window.api.loadPlaylists(accountId).then(setPlaylists);
+    window.api.loadPlaylists(accountId).then(data => {
+      console.log("UI:loaded playlists", data);
+      setPlaylists(data);
+    });
     //@ts-ignore
     window.api.loadArtists(accountId).then(setArtists);
     //@ts-ignore
     window.api.loadPodcasts(accountId).then(setPodcasts);
-  }, []);
+    console.log("loading all data finished");
+  }, [volume]);
   
   useEffect(() => {
     if (!searchText) {
@@ -120,6 +127,10 @@ export function useMainViewModel() {
     console.log("SearchText or TabIndex changed", searchText, selectedTabIndex);
   }, [searchText, selectedTabIndex]);
 
+  useEffect(() => {
+    // This would usually trigger a search API
+    console.log("isPlaying changed, number of playlists:", playlists.length);
+  }, [searchText]);
 
   
   // useEffect(() => {

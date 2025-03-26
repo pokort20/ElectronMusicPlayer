@@ -63,14 +63,17 @@ ipcMain.handle("searchDB", (searchTerm) => {
 
  //API handles
  ipcMain.handle("load-playlists", async (_, accountId) => {
+  console.log("HANDLE:load-playlists");
   return await dataHandler.getPlaylistsByAccount(accountId);
 });
 
 ipcMain.handle("load-artists", async (_, accountId) => {
+  console.log("HANDLE:load-artists");
   return await dataHandler.getArtistsByAccount(accountId);
 });
 
 ipcMain.handle("load-podcasts", async (_, accountId) => {
+  console.log("HANDLE:load-podcasts");
   return await dataHandler.getPodcastsByAccount(accountId);
 });
   console.log(apppath);

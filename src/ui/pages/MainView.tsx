@@ -102,7 +102,24 @@ export default function MainView() {
               </button>
             </div>
 
-            <div className="scroll" style={{ gridRow: 3 }}></div>
+            <div className="scroll" style={{ gridRow: 3 }}>
+            <div className="scroll" style={{ gridRow: 3 }}>
+        <h3>Playlists</h3>
+        {vm.playlists.map(p => (
+          <div key={p.id}>{p.name}</div>
+        ))}
+
+        <h3>Artists</h3>
+        {vm.artists.map(a => (
+          <div key={a.id}>{a.name}</div>
+        ))}
+
+        <h3>Podcasts</h3>
+        {vm.podcasts.map(p => (
+          <div key={p.id}>{p.name}</div>
+        ))}
+      </div>
+            </div>
             <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Artists</span>
             <div className="scroll"></div>
             <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Albums</span>
