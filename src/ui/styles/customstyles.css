@@ -3,6 +3,11 @@
     width: 50px;
     margin: 5px;
 }
+.img.icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+}
 .toggle-button.transparent {
     border-radius: 45px;
     height: 40px;

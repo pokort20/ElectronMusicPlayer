@@ -1,12 +1,39 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
+  width: 100%;
+  padding-right: 8px;
+  box-sizing: border-box;
+  flex-grow: 1;
+  min-height: 0; 
+}
+
 .grid {
     display: grid;
+    height: 100%;
   }
-  .layout.main-view {
+  .border.base {
+    border-radius: 10px;
+    background: var(--background-gradient);
+    padding: 2px;
+    margin: 2px;
+    height: 100%;
+    overflow: hidden;
+  }
+  .grid.main-view {
     display: grid;
+    overflow: hidden;
     grid-template-rows: 100px 1fr;
-    min-width: 800px;
-    min-height: 400px;
-    height: 100vh;
+    /* min-width: 800px;
+    min-height: 400px; */
+    height: 100%;
+    width: 100%;
     background: var(--ternary-bg);
   }
   .flex-grow {
@@ -19,14 +46,19 @@
     justify-content: space-between;
     width: 100%;
   }
-   
-.border.song {
+  .horizontal{
+    display: flex;
+  }
+  .border.song {
+    display: flex;
+    align-items: center;
     border-radius: 10px;
     background: var(--primary-gradient);
-    padding: 2px;
-    margin: 10px 2px;
+    padding: 2px 8px;
+    margin: 6px 2px;
     transition: transform 0.1s ease-in-out;
   }
+  
   
   .border.song:hover {
     background: var(--primary-gradient-hover);
@@ -74,13 +106,6 @@
     background: var(--primary-gradient);
     padding: 2px;
     margin: 10px;
-  }
-  
-  .border.base {
-    border-radius: 10px;
-    background: var(--background-gradient);
-    padding: 2px;
-    margin: 2px;
   }
   
   .stack.baseV {

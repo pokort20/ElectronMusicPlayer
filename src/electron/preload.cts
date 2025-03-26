@@ -42,6 +42,10 @@ electron.contextBridge.exposeInMainWorld("api", {
       console.log("PRELOAD:loadArtists", accountId);
       return electron.ipcRenderer.invoke("load-artists", accountId);
     },
+    loadAlbums: (accountId: number) => {
+        console.log("PRELOAD:loadAlbums", accountId);
+        return electron.ipcRenderer.invoke("load-albums", accountId);
+    },      
     loadPodcasts: (accountId: number) => {
       console.log("PRELOAD:loadPodcasts", accountId);
       return electron.ipcRenderer.invoke("load-podcasts", accountId);

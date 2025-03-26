@@ -3,6 +3,7 @@ import { Song} from '../models/Song.js';
 import { Playlist } from '../models/Playlist.js';
 import { Artist } from '../models/Artist.js';
 import { Podcast } from '../models/Podcast.js';
+import { Album } from '../models/Album.js';
 
 export async function searchSongs(searchTerm: string): Promise<Song[]> {
   const result = await query(
@@ -37,6 +38,16 @@ export async function getArtistsByAccount(accountId: number): Promise<Artist[]> 
      FROM artist
      JOIN account_artist ON artist.id = account_artist.artistid
      WHERE account_artist.accountid = $1`,
+    [accountId]
+  );
+  return result.rows;
+}
+export async function getAlbumsByAccount(accountId: number): Promise<Album[]> {
+  const result = await query(
+    `SELECT album.id, album.name, album.icon
+     FROM album
+     JOIN account_album ON album.id = account_album.albumid
+     WHERE account_album.accountid = $1`,
     [accountId]
   );
   return result.rows;

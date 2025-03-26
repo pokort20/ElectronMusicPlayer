@@ -10,10 +10,10 @@ app.on("ready", () => {
     const apppath = path.join(app.getAppPath(), './dist-electron/preload.cjs');
   const mainWindow = new BrowserWindow({
     title: "AvaloniaPlayer",
-    minWidth: 1200,
-    minHeight: 600,
-    width: 1280,
-    height: 720,
+    minWidth: 1400,
+    minHeight: 800,
+    width: 1400,
+    height: 800,
     webPreferences: {
         preload: apppath,
     },
@@ -66,12 +66,14 @@ ipcMain.handle("searchDB", (searchTerm) => {
   console.log("HANDLE:load-playlists");
   return await dataHandler.getPlaylistsByAccount(accountId);
 });
-
 ipcMain.handle("load-artists", async (_, accountId) => {
   console.log("HANDLE:load-artists");
   return await dataHandler.getArtistsByAccount(accountId);
 });
-
+ipcMain.handle("load-albums", async (_, accountId) => {
+  console.log("HANDLE:load-albums");
+  return await dataHandler.getAlbumsByAccount(accountId);
+});
 ipcMain.handle("load-podcasts", async (_, accountId) => {
   console.log("HANDLE:load-podcasts");
   return await dataHandler.getPodcastsByAccount(accountId);

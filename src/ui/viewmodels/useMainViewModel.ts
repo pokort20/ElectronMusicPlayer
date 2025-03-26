@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef} from "react";
-import { Playlist, Artist, Podcast } from "../../electron/models/";
+import { Album, Playlist, Artist, Podcast } from "../../electron/models/";
 
 export function useMainViewModel() {
   // --- State variables ---
@@ -22,7 +22,7 @@ export function useMainViewModel() {
   // --- Collections ---
   const [songQueue, setSongQueue] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [albums, setAlbums] = useState([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
@@ -85,12 +85,11 @@ export function useMainViewModel() {
     console.log("loading all data");
     //@ts-ignore
     //window.api.loadPlaylists(accountId).then(setPlaylists);
-    window.api.loadPlaylists(accountId).then(data => {
-      console.log("UI:loaded playlists", data);
-      setPlaylists(data);
-    });
+    window.api.loadPlaylists(accountId).then(setPlaylists);
     //@ts-ignore
     window.api.loadArtists(accountId).then(setArtists);
+    //@ts-ignore
+    window.api.loadAlbums(accountId).then(setAlbums);
     //@ts-ignore
     window.api.loadPodcasts(accountId).then(setPodcasts);
     console.log("loading all data finished");

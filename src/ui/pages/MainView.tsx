@@ -1,10 +1,11 @@
 import { useMainViewModel } from "../viewmodels/useMainViewModel";
+import YourMusicView from "./YourMusicView";
 
 export default function MainView() {
   const vm = useMainViewModel();
 
   return (
-    <div className="layout main-view">
+    <div className="grid main-view">
       {/* Navigation panel */}
       <div className="grid" style={{ gridTemplateColumns: "256px 1fr 256px" }}>
         {/* Account & settings */}
@@ -88,46 +89,7 @@ export default function MainView() {
       {/* Main content 3-column layout */}
       <div className="grid" style={{ gridTemplateColumns: "256px 1fr 256px", height: "100%" }}>
         {/* Left panel (your music) */}
-        <div className="border base">
-          <div className="grid" style={{ gridTemplateRows: "repeat(9, auto)" }}>
-            <span className="label baseH1" style={{ marginLeft: 5 }}>Your music</span>
-
-            <div className="dock" style={{ gridRow: 2 }}>
-              <span className="label baseH2" style={{ marginLeft: 20 }}>Playlists</span>
-              {/* <button className="button transparent" onClick={() => vm.addPlaylistCommand(null)}>
-                <img src="/assets/Images/plus.png" />
-              </button> */}
-              <button className="button transparent">
-                <img src="/assets/Images/plus.png" />
-              </button>
-            </div>
-
-            <div className="scroll" style={{ gridRow: 3 }}>
-            <div className="scroll" style={{ gridRow: 3 }}>
-        <h3>Playlists</h3>
-        {vm.playlists.map(p => (
-          <div key={p.id}>{p.name}</div>
-        ))}
-
-        <h3>Artists</h3>
-        {vm.artists.map(a => (
-          <div key={a.id}>{a.name}</div>
-        ))}
-
-        <h3>Podcasts</h3>
-        {vm.podcasts.map(p => (
-          <div key={p.id}>{p.name}</div>
-        ))}
-      </div>
-            </div>
-            <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Artists</span>
-            <div className="scroll"></div>
-            <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Albums</span>
-            <div className="scroll"></div>
-            <span className="label baseH2 dock" style={{ marginLeft: 20 }}>Podcasts</span>
-            <div className="scroll"></div>
-          </div>
-        </div>
+        <YourMusicView vm={vm}/>
 
         {/* Center content */}
         <div className="border base">
