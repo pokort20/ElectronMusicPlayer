@@ -1,41 +1,84 @@
 import { Song } from './models/Song.js';
+import { BrowserWindow } from "electron";
+import ld from 'lodash';
 
 export class SongQueue {
     private queue: Song[];
     private playedSongs: Song[];
-    private _currentPlayingSong: Song | null;
+    private _shuffle: boolean;
+    private _repeat: boolean;
+    private _currentPlayingSong: Song | null = null;
+    private _window: BrowserWindow | null = null;
 
     constructor() {
         this.queue = [];
         this.playedSongs = [];
-        this._currentPlayingSong = null;
+        this._shuffle = false;
+        this._repeat = false;
+    }
+    public set shuffle(value: boolean){
+        this.window?.webContents.send("shuffleChanged", this.shuffle);
+        this._shuffle = value;
+    }
+    public get shuffle(): boolean{
+        return this._shuffle;
+    }
+    public set repeat(value: boolean){
+        this.window?.webContents.send("repeatChanged", this.repeat);
+        this._repeat = value;
+    }
+    public get repeat(): boolean{
+        return this._repeat;
     }
 
+
+    public set window(window: BrowserWindow | null){
+        this._window = window;
+    }
+    public get window(): BrowserWindow | null{
+        return this._window;
+    }
     public get currentPlayingSong(): Song | null {
         return this._currentPlayingSong;
     }
-
+    public Shuffle(): void{
+        this.shuffle = !this.shuffle;
+        if(this.shuffle)
+        {
+           ld.shuffle(this.queue);
+        }
+    }
+    public Repeat(): void{
+        this.repeat = !this.repeat;
+    }
     public set currentPlayingSong(value: Song | null) {
-        if (this._currentPlayingSong !== value) {
+        if(value === null) return;
+        console.log("set Current playign song called")
+        if (this.currentPlayingSong !== value) {
             if (value && this.queue.find(s => s.id === value.id)) {
                 let index = this.queue.findIndex(s => s.id === value.id);
                 this.queue = this.queue.slice(index + 1);
             }
+            console.log("Current playign song changed");
             this._currentPlayingSong = value;
+            this.window?.webContents.send("songDescriptionChanged", {
+                name: this.currentPlayingSong?.name,
+                artist: "TBD"
+            });
         }
     }
 
     public clearQueue(): void {
         this.queue = [];
         this.playedSongs = [];
-        this._currentPlayingSong = null;
+        this.currentPlayingSong = null;
     }
 
     public shuffleQueue(includeCurrentPlayingSong: boolean): void {
-        if (!this._currentPlayingSong || this.queue.length <= 0) return;
+        if (!this.currentPlayingSong || this.queue.length <= 0) return;
 
         if (includeCurrentPlayingSong) {
-            this.queue.push(this._currentPlayingSong);
+            this.queue.push(this.currentPlayingSong);
         }
 
         for (let i = this.queue.length - 1; i > 0; i--) {
@@ -44,7 +87,7 @@ export class SongQueue {
         }
 
         if (includeCurrentPlayingSong) {
-            this._currentPlayingSong = this.queue.shift()!;
+            this.currentPlayingSong = this.queue.shift()!;
         }
     }
 
@@ -54,13 +97,19 @@ export class SongQueue {
     }
 
     public add(song: Song): void {
-        if (!this._currentPlayingSong) {
-            this._currentPlayingSong = song;
+        if (!this.currentPlayingSong) {
+            this.currentPlayingSong = song;
             return;
         }
 
         if (!this.queue.find(s => s.id === song.id)) {
             this.queue.push(song);
+        }
+        this.window?.webContents.send("songQueueChanged", this.queue);
+    }
+    public addSongs(songs: Song[]): void {
+        for (const song of songs) {
+            this.add(song);
         }
     }
 
@@ -69,23 +118,23 @@ export class SongQueue {
     }
 
     public next(repeat: boolean): Song | null {
-        if (this._currentPlayingSong && this.queue.length > 0) {
+        if (this.currentPlayingSong && this.queue.length > 0) {
             if (!repeat) {
                 const nextSong = this.queue.shift()!;
-                this.playedSongs.push(this._currentPlayingSong);
-                this._currentPlayingSong = nextSong;
+                this.playedSongs.push(this.currentPlayingSong);
+                this.currentPlayingSong = nextSong;
             }
         }
-        return this._currentPlayingSong;
+        return this.currentPlayingSong;
     }
 
     public previous(): Song | null {
-        if (this._currentPlayingSong && this.playedSongs.length > 0) {
+        if (this.currentPlayingSong && this.playedSongs.length > 0) {
             const previousSong = this.playedSongs.pop()!;
-            this.queue.unshift(this._currentPlayingSong);
-            this._currentPlayingSong = previousSong;
+            this.queue.unshift(this.currentPlayingSong);
+            this.currentPlayingSong = previousSong;
         }
-        return this._currentPlayingSong;
+        return this.currentPlayingSong;
     }
 
     public changePosition(queue: Song[], item: Song, newIndex: number): Song[] {

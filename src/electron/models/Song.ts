@@ -4,5 +4,4 @@ export interface Song {
     duration: string;
     icon: Buffer;
     data: Buffer;
-    albumid: number | null;
   }

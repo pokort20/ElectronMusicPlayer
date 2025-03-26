@@ -1,16 +1,15 @@
 import React from "react";
-import { useMainViewModel } from "../viewmodels/useMainViewModel";
+import type { MainViewModel } from "../viewmodels/useMainViewModel";
 
 interface YourMusicViewProps {
-    vm: ReturnType<typeof useMainViewModel>; // reuse correct type
-  }
+  vm: MainViewModel;
+}
   
 
 const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
   return (
-    <div className="border base" style={{ height: "100%" }}>
-      {/* <div className="grid" style={{ gridTemplateRows: "auto auto 1fr auto 1fr auto 1fr auto 1fr" }}> */}
-      <div className="grid" style={{ gridTemplateRows: "auto auto 130px auto 130px auto 130px auto 130px" }}>
+    <div className="border base">
+      <div className="grid" style={{ gridTemplateRows: "40px 50px 120px 30px 120px 30px 120px 30px 120px" }}>
         <span className="label baseH1" style={{ gridRow: 1, marginLeft: 5 }}>Your music</span>
 
         <div className="dock" style={{ gridRow: 2 }}>
@@ -27,7 +26,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <div>{p.name}</div>
               </div>
               <button className="button circle">
-                <img src="/assets/Images/play.png" alt="play" />
+                <img src="/assets/Images/play.png" alt="play" onClick={() => vm.playPlaylistCommand(p.id)}/>
               </button>
             </div>
           ))}
@@ -42,7 +41,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <div>{a.name}</div>
               </div>
               <button className="button circle">
-                <img src="/assets/Images/play.png" alt="play" />
+                <img src="/assets/Images/play.png" alt="play" onClick={() => vm.playArtistCommand(a.id)} />
               </button>
             </div>
           ))}
@@ -57,7 +56,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <div>{a.name}</div>
               </div>
               <button className="button circle">
-                <img src="/assets/Images/play.png" alt="play" />
+                <img src="/assets/Images/play.png" alt="play" onClick={() => vm.playAlbumCommand(a.id)}/>
               </button>
             </div>
           ))}
@@ -72,7 +71,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <div>{p.name}</div>
               </div>
               <button className="button circle">
-                <img src="/assets/Images/play.png" alt="play" />
+                <img src="/assets/Images/play.png" alt="play" onClick={() => vm.playPodcastCommand(p.id)}/>
               </button>
             </div>
           ))}

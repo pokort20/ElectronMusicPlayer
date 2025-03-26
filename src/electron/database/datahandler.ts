@@ -21,6 +21,36 @@ export async function searchSongs(searchTerm: string): Promise<Song[]> {
 
   return result.rows;
 }
+export async function getSongsByPlaylist(playlistId: number): Promise<Song[]> {
+  const result = await query(
+    `SELECT song.id, song.name, song.duration, song.icon, song.data
+     FROM song
+     JOIN song_playlist ON song.id = song_playlist.songid
+     WHERE song_playlist.playlistid = $1`,
+    [playlistId]
+  );
+  return result.rows;
+}
+export async function getSongsByArtist(artistId: number): Promise<Song[]> {
+  const result = await query(
+    `SELECT song.id, song.name, song.duration, song.icon, song.data
+     FROM song
+     JOIN song_artist ON song.id = song_artist.songid
+     WHERE song_artist.artistid = $1`,
+    [artistId]
+  );
+  return result.rows;
+}
+export async function getSongsByAlbum(albumId: number): Promise<Song[]> {
+  const result = await query(
+    `SELECT song.id, song.name, song.duration, song.icon, song.data
+     FROM song
+     JOIN album_song ON song.id = album_song.songid
+     WHERE album_song.albumid = $1`,
+    [albumId]
+  );
+  return result.rows;
+}
 //account collections
 export async function getPlaylistsByAccount(accountId: number): Promise<Playlist[]> {
   const result = await query(
@@ -61,4 +91,38 @@ export async function getPodcastsByAccount(accountId: number): Promise<Podcast[]
     [accountId]
   );
   return result.rows;
+}
+export async function getSuggestedSongs(accountId: number, count: number): Promise<Song[]> {
+  const result = await query(
+    `SELECT song.id, song.name, song.duration, song.icon
+     FROM song
+     ORDER BY RANDOM()
+     LIMIT $1`,
+    [count]
+  );
+  return result.rows;
+}
+
+export async function getSuggestedArtists(accountId: number, count: number): Promise<Artist[]> {
+  const result = await query(
+    `SELECT artist.id, artist.name
+     FROM artist
+     JOIN account_artist ON artist.id = account_artist.artistid
+     WHERE account_artist.accountid = $1
+     ORDER BY RANDOM()
+     LIMIT $2`,
+    [accountId, count]
+  );
+  return result.rows;
+}
+export async function getAuthorsBySong(songId: number): Promise<string> {
+  const result = await query(
+    `SELECT artist.name
+     FROM artist
+     JOIN song_artist ON artist.id = song_artist.artistid
+     WHERE song_artist.songid = $1`,
+    [songId]
+  );
+  const names = result.rows.map(row => row.name);
+  return names.join(", ");
 }

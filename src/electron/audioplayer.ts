@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { BrowserWindow } from "electron";
 import path, { dirname } from 'path';
 import { Readable } from 'stream';
 import Speaker from 'speaker';
@@ -15,72 +15,87 @@ class AudioPlayer {
     private speaker: Speaker | null = null;
     private stream: Readable | null = null;
     private volumeNode: Volume | null = null;
+    private _window: BrowserWindow | null = null;
     private isInitiated = false;
-    private isPlaying = false;
+    private _isPlaying = false;
     private isMuted = false;
-    private _volume: number = 0.5;
-    private unmutedVolume = 0.5;
+    private _volume: number = 0.05;
+    private unmutedVolume = 0.05;
 
+    public set window(window: BrowserWindow | null) {
+        this._window = window;
+    }
+    public get window(): BrowserWindow | null {
+        return this._window;
+    }
 
-    public get volume(): number
-    {
+    private set isPlaying(value: boolean) {
+        this.window?.webContents.send("isPlayingChanged", this.isPlaying);
+        this._isPlaying = value;
+    }
+    private get isPlaying(): boolean {
+        return this._isPlaying;
+    }
+
+    public get volume(): number {
         return this._volume;
     }
 
     async play(song: Song | null): Promise<boolean> {
-        this.isPlaying = true;
-        const filePath = path.resolve(__dirname, '../public/assets/Sounds/0.mp3');
+        // if(this.isPlaying)this.stop();
 
-        this.stream = fs.createReadStream(filePath);
-        this.ffmpeg = new prism.FFmpeg({
-            args: ['-analyzeduration', '0', '-loglevel', '0', '-i', 'pipe:0', '-f', 's16le', '-ar', '48000', '-ac', '2'],
-        });
+        // this.isPlaying = true;
+        // const filePath = path.resolve(__dirname, '../public/assets/Sounds/0.mp3');
 
-        this.volumeNode = new Volume();
-        this.volumeNode.setVolume(this._volume);
+        // this.stream = fs.createReadStream(filePath);
+        // this.ffmpeg = new prism.FFmpeg({
+        //     args: ['-analyzeduration', '0', '-loglevel', '0', '-i', 'pipe:0', '-f', 's16le', '-ar', '48000', '-ac', '2'],
+        // });
 
-        this.speaker = new Speaker({
-            channels: 2,
-            bitDepth: 16,
-            sampleRate: 48000,
-        });
+        // this.volumeNode = new Volume();
+        // this.volumeNode.setVolume(this._volume);
 
-        this.stream
-            .pipe(this.ffmpeg)
-            .pipe(this.volumeNode)
-            .pipe(this.speaker);
+        // this.speaker = new Speaker({
+        //     channels: 2,
+        //     bitDepth: 16,
+        //     sampleRate: 48000,
+        // });
 
-        this.isInitiated = true;
-        console.log("AudioPlayer: playing song");
+        // this.stream
+        //     .pipe(this.ffmpeg)
+        //     .pipe(this.volumeNode)
+        //     .pipe(this.speaker);
+
+        // this.isInitiated = true;
+        // console.log("AudioPlayer: playing song");
 
         return this.isPlaying;
     }
-    async playPause(song: Song | null): Promise<boolean>{
+    async playPause(song: Song | null): Promise<boolean> {
         //if(song == null)return this.isPlaying;
-        if(this.isPlaying)
-        {
+        if (this.isPlaying) {
             this.pause();
             console.log("AudioPlayer: Paused");
         }
-        else{
+        else {
             this.resume();
             console.log("AudioPlayer: Playing");
         }
         this.isPlaying = !this.isPlaying;
         return this.isPlaying;
     }
-    async pause(): Promise<void>{
-        if(this.stream)this.stream.pause();
+    async pause(): Promise<void> {
+        if (this.stream) this.stream.pause();
     }
     async resume(): Promise<void> {
-        if(this.stream)this.stream.resume();
+        if (this.stream) this.stream.resume();
     }
-    async mute(): Promise<void>{
-        if(this.isMuted){
+    async mute(): Promise<void> {
+        if (this.isMuted) {
             this.changeVolume(this.unmutedVolume);
             console.log("AudioPlayer: Unmuted");
         }
-        else{
+        else {
             this.changeVolume(0);
             console.log("AudioPlayer: Muted");
         }
@@ -105,7 +120,7 @@ class AudioPlayer {
         this._volume = volume;
         if (this.volumeNode) {
             this.volumeNode.setVolume(this._volume); // volume: 0.0 - 1.0
-            if(this._volume > 0)this.unmutedVolume = this._volume;
+            if (this._volume > 0) this.unmutedVolume = this._volume;
             console.log("AudioPlayer: volume set to ", this._volume);
         }
     }

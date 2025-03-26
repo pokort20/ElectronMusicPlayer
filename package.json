@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "howler": "^2.2.4",
+    "lodash": "^4.17.21",
     "node-mpv": "^1.5.0",
     "pcm-volume": "^1.0.0",
     "pg": "^8.14.1",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/howler": "^2.2.12",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.13",
     "@types/pcm-volume": "^1.0.2",
     "@types/pg": "^8.11.11",
