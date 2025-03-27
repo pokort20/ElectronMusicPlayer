@@ -4,26 +4,28 @@ import PlayerControlsView from "./PlayerControls";
 import QueueSuggestionsView from "./QueueAndSuggestions";
 import YourMusicView from "./YourMusicView";
 import HomeView from "./HomeView";
+import SongTabItem from "./SongTabItem";
+import ArtistTabItem from "./ArtistTabItem";
+import AlbumTabItem from "./AlbumTabItem";
+import PlaylistTabItem from "./PlaylistTabItem";
+import PodcastTabItem from "./PodcastTabItem";
 
 export default function MainView() {
   const vm = useMainViewModel();
 
   return (
     <div className="grid main-view">
-      {/* Navigation panel */}
       <div className="grid" style={{ gridTemplateColumns: "256px 1fr 256px" }}>
-        <AccountSettingsView vm={vm}/>
+        <AccountSettingsView vm={vm} />
 
-        <PlayerControlsView vm={vm}/>
-        
+        <PlayerControlsView vm={vm} />
+
         {/* empty section */}
         <div className="border base"></div>
       </div>
 
-      {/* Main content 3-column layout */}
       <div className="grid" style={{ gridTemplateColumns: "256px 1fr 256px", height: "100%" }}>
-        {/* Left panel (your music) */}
-        <YourMusicView vm={vm}/>
+        <YourMusicView vm={vm} />
 
         {/* Center content */}
         <div className="border base">
@@ -40,17 +42,17 @@ export default function MainView() {
                 placeholder="Search..."
                 value={vm.searchText}
                 onChange={async (e) => {
-                    const newText = e.target.value;
-                    vm.setSearchText(newText);
+                  const newText = e.target.value;
+                  vm.setSearchText(newText);
 
-                    if (newText.trim().length > 0) {
-                        // @ts-ignore
+                  if (newText.trim().length > 0) {
+                    // @ts-ignore
                     const results = await window.electron.searchDB(newText);
                     console.log("Search results:", results);
                     //update state
-                    }
+                  }
                 }}
-/>
+              />
 
               <button className="button circle" onClick={vm.homeCommand}>
                 <img src="/assets/Images/home.png" />
@@ -58,13 +60,35 @@ export default function MainView() {
             </div>
             <div>
               {/* Conditional rendering */}
-              {vm.isHomePageVisible ? <HomeView vm={vm}/> : <div>Tabs</div>}
+              {vm.isHomePageVisible ? <HomeView vm={vm} /> : <div></div>}
+              {vm.isTabControlVisible && (
+                <div className="tab-control">
+                  <div className="tab-header">
+                    {["Songs", "Artists", "Albums", "Playlists", "Podcasts"].map((label, i) => (
+                      <button
+                        key={label}
+                        className={`tab-button ${vm.selectedTabIndex === i ? "active" : ""}`}
+                        onClick={() => vm.setSelectedTabIndex(i)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="tab-content">
+                    {vm.selectedTabIndex === 0 && <SongTabItem vm={vm} />}
+                    {vm.selectedTabIndex === 1 && <ArtistTabItem vm={vm} />}
+                    {vm.selectedTabIndex === 2 && <AlbumTabItem vm={vm} />}
+                    {vm.selectedTabIndex === 3 && <PlaylistTabItem vm={vm} />}
+                    {vm.selectedTabIndex === 4 && <PodcastTabItem vm={vm} />}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Right panel (queue + suggestions) */}
-        <QueueSuggestionsView vm={vm}/>
+        <QueueSuggestionsView vm={vm} />
       </div>
     </div>
   );

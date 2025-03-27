@@ -3,4 +3,5 @@ export interface Album {
   name: string;
   year: number;
   icon: Buffer;
+  artistNames: string;  
 }

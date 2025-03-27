@@ -32,12 +32,11 @@ app.on("ready", () => {
   }
   let isPlaying = false;
 
-
 //player control handles
-ipcMain.handle("playSong", async (_, songdId) => {
+ipcMain.handle("playSong", async (_, song) => {
   isPlaying = !isPlaying;
   console.log("HANDLE:playSong");
-  audioPlayer.play(songdId);
+  songQueue.currentPlayingSong = song;
   return isPlaying;
 });
 ipcMain.handle("playPlaylist", async (_, playlistId) => {
@@ -51,10 +50,10 @@ ipcMain.handle("playPlaylist", async (_, playlistId) => {
 
 ipcMain.handle("playAlbum", async (_, albumId) => {
   console.log("HANDLE:playAlbum", albumId);
-  const songs = await dataHandler.getSongsByAlbum(albumId);
-  songqueue.clearQueue();
-  songQueue.addSongs(songs);
-  audioPlayer.play(songqueue.currentPlayingSong);
+  // const songs = await dataHandler.getSongsByAlbum(albumId);
+  // songqueue.clearQueue();
+  // songQueue.addSongs(songs);
+  // audioPlayer.play(songqueue.currentPlayingSong);
   return isPlaying;
 });
 
@@ -150,6 +149,32 @@ ipcMain.handle("load-suggested-artists", async (_, accountId, count) => {
   console.log("HANDLE:load-suggested-artists");
   return await dataHandler.getSuggestedArtists(accountId, count);
 });
+ipcMain.handle("search-songs", async (_, searchTerm) => {
+  console.log("HANDLE:search-songs");
+  return await dataHandler.searchSongs(searchTerm);
+});
+
+ipcMain.handle("search-artists", async (_, searchTerm) => {
+  console.log("HANDLE:search-artists");
+  return await dataHandler.searchArtists(searchTerm);
+});
+
+ipcMain.handle("search-albums", async (_, searchTerm) => {
+  console.log("HANDLE:search-albums");
+  return await dataHandler.searchAlbums(searchTerm);
+});
+
+ipcMain.handle("search-podcasts", async (_, searchTerm) => {
+  console.log("HANDLE:search-podcasts");
+  return await dataHandler.searchPodcasts(searchTerm);
+});
+
+ipcMain.handle("search-playlists", async (_, searchTerm) => {
+  console.log("HANDLE:search-playlists");
+  return await dataHandler.searchPlaylists(searchTerm);
+});
+
+
   console.log(apppath);
 });
 

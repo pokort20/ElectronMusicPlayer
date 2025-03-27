@@ -4,4 +4,5 @@ export interface Song {
     duration: string;
     icon: Buffer;
     data: Buffer;
+    artistNames: string;
   }

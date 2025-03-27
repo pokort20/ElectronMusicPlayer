@@ -9,12 +9,12 @@ const PlayerControlsView: React.FC<PlayerControlsViewProps> = ({ vm }) => {
     return (
         <div className="border base">
             <div className="grid" style={{ gridTemplateRows: "70px auto", height: "100%" }}>
-                <div className="grid" style={{ gridTemplateColumns: "1fr 3fr 1fr" }}>
+                <div className="grid" style={{ gridTemplateColumns: "200px 3fr 200px" }}>
                     <div className="stack leftH">
                         <img className="img song" src="/assets/Images/home.png" />
-                        <div className="stack leftV">
+                        <div className="stack leftV" style={{ marginLeft: 5, marginBottom: 10}}>
                             <span className="label base" style={{ fontSize: 20, marginTop: 18, marginBottom: -4 }}>{vm.songName}</span>
-                            <span className="label base" style={{ fontSize: 13 }}>{vm.authorName}</span>
+                            <span className="label base" style={{ maxWidth: 150, fontSize: 13 }}>{vm.authorName}</span>
                         </div>
                     </div>
 

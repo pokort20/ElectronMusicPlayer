@@ -13,14 +13,30 @@ html, body, #root {
   flex-grow: 1;
   min-height: 0; 
 }
+
+.podcast-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.podcast-author {
+  font-size: 14px;
+}
+
+.podcast-description {
+  border: 1px solid #888;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
 .wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px; /* Space between items, similar to Margin in Avalonia */
-  align-items: center; /* Optional: vertical alignment */
-  justify-content: flex-start; /* Optional: horizontal alignment */
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
 }
-
 .grid {
     display: grid;
     height: 100%;
@@ -54,6 +70,7 @@ html, body, #root {
   }
   .horizontal{
     display: flex;
+    align-items: center;
   }
   .border.song {
     display: flex;
@@ -110,6 +127,10 @@ html, body, #root {
     background: var(--primary-gradient);
     padding: 2px;
     margin: 10px;
+  }
+  .border.podcast:hover {
+    background: var(--primary-gradient-hover);
+    transform: scale(1.05);
   }
   
   .stack.baseV {

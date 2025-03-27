@@ -52,18 +52,26 @@ export class SongQueue {
         this.repeat = !this.repeat;
     }
     public set currentPlayingSong(value: Song | null) {
-        if(value === null) return;
-        console.log("set Current playign song called")
         if (this.currentPlayingSong !== value) {
             if (value && this.queue.find(s => s.id === value.id)) {
                 let index = this.queue.findIndex(s => s.id === value.id);
                 this.queue = this.queue.slice(index + 1);
+                console.log("song was in queue");
             }
-            console.log("Current playign song changed");
+            if(value)
+            {
+                console.log("Current playing song changed to:", {
+                    id: value.id,
+                    name: value.name,
+                    duration: value.duration,
+                    artistNames: value.artistNames,
+                  });
+            }
+
             this._currentPlayingSong = value;
             this.window?.webContents.send("songDescriptionChanged", {
                 name: this.currentPlayingSong?.name,
-                artist: "TBD"
+                artist: this.currentPlayingSong?.artistNames
             });
         }
     }

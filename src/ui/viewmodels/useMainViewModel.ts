@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef} from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Song, Album, Playlist, Artist, Podcast } from "../../electron/models/";
 
 export type MainViewModel = ReturnType<typeof useMainViewModel>;
@@ -9,7 +9,7 @@ export function useMainViewModel() {
   const [authorName, setAuthorName] = useState("AuthorName");
   const [timeElapsed, setTimeElapsed] = useState("0:00");
   const [timeLeft, setTimeLeft] = useState("0:00");
-  const [accountName, setAccountName] = useState("AccountName");
+  const [accountName, setAccountName] = useState("TestAccount");
   const [searchText, setSearchText] = useState("");
   const [volume, setVolume] = useState<number>(1);
   const [songProgress, setSongProgress] = useState(0);
@@ -29,6 +29,11 @@ export function useMainViewModel() {
   const [suggestedArtists, setSuggestedArtists] = useState<Song[]>([]);
   const [trendingSongs, setTrendingSongs] = useState<Song[]>([]);
   const [trendingArtists, setTrendingArtists] = useState<Song[]>([]);
+  const [searchSongs, setSearchSongs] = useState<Song[]>([]);
+  const [searchArtists, setSearchArtists] = useState<Artist[]>([]);
+  const [searchAlbums, setSearchAlbums] = useState<Album[]>([]);
+  const [searchPlaylists, setSearchPlaylists] = useState<Playlist[]>([]);
+  const [searchPodcasts, setSearchPodcasts] = useState<Podcast[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -37,20 +42,27 @@ export function useMainViewModel() {
 
   // --- Command logic ---
   //Player controls
-  
+
   const changeVolume = useCallback((volume: number) => {
     console.log("volume changed", volume);
     //@ts-ignore
     window.electron.changeVolume(volume);
   }, []);
-  
+
   const playPauseCommand = useCallback(async () => {
     //@ts-ignore
     await window.electron.playPause();
   }, []);
-  const playSongCommand = useCallback(async (songid: number) => {
+  const playSongCommand = useCallback(async (song: Song) => {
+    console.log("UI SENDS SONG:", {
+      id: song.id,
+      name: song.name,
+      duration: song.duration,
+      artistNames: song.artistNames,
+    });
+    
     //@ts-ignore
-    await window.electron.playSong(songid);
+    await window.electron.playSong(song);
   }, []);
   const playPlaylistCommand = useCallback(async (playlistId: number) => {
     //@ts-ignore
@@ -110,7 +122,7 @@ export function useMainViewModel() {
   const addPlaylistCommand = useCallback(() => {
     console.log("AddPlaylistCommand not implemented");
   }, []);
- 
+
   // --- Effects ---
   useEffect(() => {
     const accountId = 1; // later from login
@@ -125,25 +137,15 @@ export function useMainViewModel() {
     //@ts-ignore
     window.api.loadPodcasts(accountId).then(setPodcasts);
     //@ts-ignore
-    window.api.loadSuggestedSongs(accountId, 5).then(setSuggestedSongs);
+    window.api.loadSuggestedSongs(accountId, 4).then(setSuggestedSongs);
     //@ts-ignore
-    window.api.loadSuggestedArtists(accountId, 5).then(setSuggestedArtists);
+    window.api.loadSuggestedArtists(accountId, 2).then(setSuggestedArtists);
     //@ts-ignore
-    window.api.loadSuggestedSongs(accountId, 5).then(setTrendingSongs);
+    window.api.loadSuggestedSongs(accountId, 4).then(setTrendingSongs);
     //@ts-ignore
     window.api.loadSuggestedArtists(accountId, 5).then(setTrendingArtists);
     console.log("loading all data finished");
   }, []);
-  
-  useEffect(() => {
-    if (!searchText) {
-      setIsHomePageVisible(true);
-      setIsTabControlVisible(false);
-    } else {
-      setIsHomePageVisible(false);
-      setIsTabControlVisible(true);
-    }
-  }, [searchText]);
 
   useEffect(() => {
     if (Math.abs(previousVolume.current - volume) > 0.001) {
@@ -198,16 +200,41 @@ export function useMainViewModel() {
   }, []);
 
   useEffect(() => {
-    // This would usually trigger a search API
-    console.log("SearchText or TabIndex changed", searchText, selectedTabIndex);
-  }, [searchText, selectedTabIndex]);
-
-  useEffect(() => {
-    // This would usually trigger a search API
-    console.log("isPlaying changed, number of playlists:", playlists.length);
+    if (!searchText) {
+      setIsHomePageVisible(true);
+      setIsTabControlVisible(false);
+    } else {
+      setIsHomePageVisible(false);
+      setIsTabControlVisible(true);
+    }
   }, [searchText]);
 
-  
+  useEffect(() => {
+    console.log("SearchText or TabIndex changed", searchText, selectedTabIndex);
+    switch (selectedTabIndex) {
+      case 0:
+        // @ts-ignore
+        window.api.searchSongs(searchText).then(setSearchSongs);
+        break;
+      case 1:
+        // @ts-ignore
+        window.api.searchArtists(searchText).then(setSearchArtists);
+        break;
+      case 2:
+        // @ts-ignore
+        window.api.searchAlbums(searchText).then(setSearchAlbums);
+        break;
+      case 3:
+        // @ts-ignore
+        window.api.searchPlaylists(searchText).then(setSearchPlaylists);
+        break;
+      case 4:
+        // @ts-ignore
+        window.api.searchPodcasts(searchText).then(setSearchPodcasts);
+        break;
+    }
+  }, [searchText, selectedTabIndex]);
+
   // useEffect(() => {
   //   //@ts-ignore
   //   window.electron.subVolume((vol) => console.log("volume: ", vol));
@@ -264,6 +291,16 @@ export function useMainViewModel() {
     setAlbums,
     podcasts,
     setPodcasts,
+    searchSongs,
+    setSearchSongs,
+    searchArtists,
+    setSearchArtists,
+    searchAlbums,
+    setSearchAlbums,
+    searchPlaylists,
+    setSearchPlaylists,
+    searchPodcasts,
+    setSearchPodcasts,
 
     // Commands
     changeVolume,

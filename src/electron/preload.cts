@@ -3,14 +3,14 @@ import type { Song } from "./models/Song.js" with { "resolution-mode": "import" 
 const electron = require('electron');
 
 electron.contextBridge.exposeInMainWorld("electron", {
-    playSong: (songid: number) => {
+    playSong: (song: Song) => {
         console.log("PRELOAD:playSong");
-        return electron.ipcRenderer.invoke("playSong", songid);
+        return electron.ipcRenderer.invoke("playSong", song);
     },
     playPlaylist: (playlistId: number) => {
         console.log("PRELOAD:playPlaylist", playlistId);
         return electron.ipcRenderer.invoke("playPlaylist", playlistId);
-      },
+    },
     playAlbum: (albumId: number) => {
         console.log("PRELOAD:playAlbum", albumId);
         return electron.ipcRenderer.invoke("playAlbum", albumId);
@@ -124,6 +124,25 @@ electron.contextBridge.exposeInMainWorld("api", {
     loadSuggestedArtists: (accountId: number, count: number) => {
         console.log("PRELOAD:loadSuggestedArtists", accountId, count);
         return electron.ipcRenderer.invoke("load-suggested-artists", accountId, count);
-    }
-
+    },
+    searchSongs: (searchTerm: string) => {
+        console.log("PRELOAD:searchSongs", searchTerm);
+        return electron.ipcRenderer.invoke("search-songs", searchTerm);
+    },
+    searchArtists: (searchTerm: string) => {
+        console.log("PRELOAD:searchArtists", searchTerm);
+        return electron.ipcRenderer.invoke("search-artists", searchTerm);
+    },
+    searchAlbums: (searchTerm: string) => {
+        console.log("PRELOAD:searchAlbums", searchTerm);
+        return electron.ipcRenderer.invoke("search-albums", searchTerm);
+    },
+    searchPodcasts: (searchTerm: string) => {
+        console.log("PRELOAD:searchPodcasts", searchTerm);
+        return electron.ipcRenderer.invoke("search-podcasts", searchTerm);
+    },
+    searchPlaylists: (searchTerm: string) => {
+        console.log("PRELOAD:searchPlaylists", searchTerm);
+        return electron.ipcRenderer.invoke("search-playlists", searchTerm);
+    },
 });  
