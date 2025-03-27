@@ -3,9 +3,9 @@ import type { Song } from "./models/Song.js" with { "resolution-mode": "import" 
 const electron = require('electron');
 
 electron.contextBridge.exposeInMainWorld("electron", {
-    playSong: () => {
+    playSong: (songid: number) => {
         console.log("PRELOAD:playSong");
-        return electron.ipcRenderer.invoke("playSong");
+        return electron.ipcRenderer.invoke("playSong", songid);
     },
     playPlaylist: (playlistId: number) => {
         console.log("PRELOAD:playPlaylist", playlistId);

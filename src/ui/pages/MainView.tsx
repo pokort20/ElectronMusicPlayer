@@ -3,6 +3,7 @@ import AccountSettingsView from "./AccountAndSettings";
 import PlayerControlsView from "./PlayerControls";
 import QueueSuggestionsView from "./QueueAndSuggestions";
 import YourMusicView from "./YourMusicView";
+import HomeView from "./HomeView";
 
 export default function MainView() {
   const vm = useMainViewModel();
@@ -57,7 +58,7 @@ export default function MainView() {
             </div>
             <div>
               {/* Conditional rendering */}
-              {vm.isHomePageVisible ? <div>HomeView</div> : <div>Tabs</div>}
+              {vm.isHomePageVisible ? <HomeView vm={vm}/> : <div>Tabs</div>}
             </div>
           </div>
         </div>

@@ -100,7 +100,8 @@
     display: block;
   }
 
-  .image.cardImage {
+  .cardImage {
+    margin: 0px;
     content: url('../assets/Images/account.png');
   }
   

@@ -34,10 +34,10 @@ app.on("ready", () => {
 
 
 //player control handles
-ipcMain.handle("playSong", () => {
+ipcMain.handle("playSong", async (_, songdId) => {
   isPlaying = !isPlaying;
   console.log("HANDLE:playSong");
-  audioPlayer.play(songQueue.currentPlayingSong);
+  audioPlayer.play(songdId);
   return isPlaying;
 });
 ipcMain.handle("playPlaylist", async (_, playlistId) => {

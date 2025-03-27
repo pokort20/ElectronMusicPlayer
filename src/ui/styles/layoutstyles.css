@@ -13,6 +13,13 @@ html, body, #root {
   flex-grow: 1;
   min-height: 0; 
 }
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px; /* Space between items, similar to Margin in Avalonia */
+  align-items: center; /* Optional: vertical alignment */
+  justify-content: flex-start; /* Optional: horizontal alignment */
+}
 
 .grid {
     display: grid;
@@ -66,19 +73,17 @@ html, body, #root {
   
   .border.card {
     opacity: 1;
-    width: 250px;
-    height: 250px;
+    width: 136px;
+    height: 136px;
     border-radius: 15px;
     background: var(--primary-gradient);
     padding: 2px;
-    margin: 10px;
+    margin: 5px;
     transition: transform 0.1s ease-in-out, padding 0.1s, border-radius 0.1s;
   }
   
   .border.card:hover {
-    border-radius: 20px;
     background: var(--primary-gradient-hover);
-    padding: 5px;
     transform: scale(1.05);
   }
   

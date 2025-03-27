@@ -48,9 +48,9 @@ export function useMainViewModel() {
     //@ts-ignore
     await window.electron.playPause();
   }, []);
-  const playSongCommand = useCallback(async () => {
+  const playSongCommand = useCallback(async (songid: number) => {
     //@ts-ignore
-    await window.electron.playSong();
+    await window.electron.playSong(songid);
   }, []);
   const playPlaylistCommand = useCallback(async (playlistId: number) => {
     //@ts-ignore
