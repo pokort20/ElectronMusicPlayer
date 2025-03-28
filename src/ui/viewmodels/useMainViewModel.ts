@@ -38,9 +38,25 @@ export function useMainViewModel() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   // --- Command logic ---
+  //modal
+
+
+  const openModal = () => {
+    console.log("Opening modal");
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const addPlaylistCommand = useCallback((playlistname: string) => {
+    console.log("adding playlist: ", playlistname);
+  }, []);
+
   //Player controls
 
   const changeVolume = useCallback((volume: number) => {
@@ -60,7 +76,7 @@ export function useMainViewModel() {
       duration: song.duration,
       artistNames: song.artistNames,
     });
-    
+
     //@ts-ignore
     await window.electron.playSong(song);
   }, []);
@@ -117,10 +133,6 @@ export function useMainViewModel() {
     setSearchText("");
     setIsHomePageVisible(true);
     setIsTabControlVisible(false);
-  }, []);
-
-  const addPlaylistCommand = useCallback(() => {
-    console.log("AddPlaylistCommand not implemented");
   }, []);
 
   // --- Effects ---
@@ -301,6 +313,12 @@ export function useMainViewModel() {
     setSearchPlaylists,
     searchPodcasts,
     setSearchPodcasts,
+
+    //modal
+    isModalOpen,
+    setIsModalOpen,
+    openModal,
+    closeModal,
 
     // Commands
     changeVolume,

@@ -1,5 +1,6 @@
 import React from "react";
 import type { MainViewModel } from "../viewmodels/useMainViewModel";
+import AddPlaylistModal from "./AddPlaylistModal";
 
 interface YourMusicViewProps {
     vm: MainViewModel;
@@ -14,10 +15,15 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
 
                 <div className="dock" style={{ gridRow: 2 }}>
                     <span className="label baseH2" style={{ marginLeft: 20 }}>Playlists</span>
-                    <button className="button transparent">
+                    <button className="button transparent" onClick={vm.openModal}>
                         <img src="/assets/Images/plus.png" />
                     </button>
                 </div>
+                {vm.isModalOpen && (
+                    <AddPlaylistModal
+                        onAddPlaylist={vm.addPlaylistCommand}
+                        onClose={vm.closeModal}
+                    />)}
                 <div className="scroll" style={{ gridRow: 3 }}>
                     {vm.playlists.map(p => (
                         <div key={p.id} className="border song dock">
