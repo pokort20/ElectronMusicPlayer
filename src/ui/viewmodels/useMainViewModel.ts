@@ -7,8 +7,8 @@ export function useMainViewModel() {
   // --- State variables ---
   const [songName, setSongName] = useState("SongName");
   const [authorName, setAuthorName] = useState("AuthorName");
-  const [timeElapsed, setTimeElapsed] = useState("0:00");
-  const [timeLeft, setTimeLeft] = useState("0:00");
+  const [timeElapsed, setTimeElapsed] = useState("1:01");
+  const [timeLeft, setTimeLeft] = useState("2:05");
   const [accountName, setAccountName] = useState("TestAccount");
   const [searchText, setSearchText] = useState("");
   const [volume, setVolume] = useState<number>(1);
@@ -137,7 +137,7 @@ export function useMainViewModel() {
 
   // --- Effects ---
   useEffect(() => {
-    const accountId = 1; // later from login
+    const accountId = 1;
     console.log("loading all data");
     //@ts-ignore
     //window.api.loadPlaylists(accountId).then(setPlaylists);
@@ -182,6 +182,7 @@ export function useMainViewModel() {
       setAuthorName(description.artist);
     });
   }, []);
+
   useEffect(() => {
     // @ts-ignore
     window.electron.songQueueChanged((queue: Song[]) => {
@@ -189,20 +190,23 @@ export function useMainViewModel() {
       setSongQueue(queue);
     });
   }, []);
+
   useEffect(() => {
     // @ts-ignore
     window.electron.isPlayingChanged((data: boolean) => {
-      console.log("Renderer received isPlaying:");
+      console.log("Renderer received isPlaying:", data);
       setIsPlaying(data);
     });
   }, []);
+
   useEffect(() => {
     // @ts-ignore
     window.electron.shuffleChanged((data: boolean) => {
-      console.log("Renderer received shuffle:");
       setShuffle(data);
     });
   }, []);
+
+
   useEffect(() => {
     // @ts-ignore
     window.electron.repeatChanged((data: boolean) => {

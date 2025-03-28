@@ -44,7 +44,6 @@ ipcMain.handle("playPlaylist", async (_, playlistId) => {
   const songs = await dataHandler.getSongsByPlaylist(playlistId);
   songqueue.clearQueue();
   songQueue.addSongs(songs);
-  audioPlayer.play(songqueue.currentPlayingSong);
   return isPlaying;
 });
 
@@ -62,7 +61,6 @@ ipcMain.handle("playArtist", async (_, artistId) => {
   const songs = await dataHandler.getSongsByArtist(artistId);
   songqueue.clearQueue();
   songQueue.addSongs(songs);
-  audioPlayer.play(songqueue.currentPlayingSong);
   return isPlaying;
 });
 
@@ -88,16 +86,12 @@ ipcMain.handle("changeVolume", (event, volume) => {
 });
 ipcMain.handle("next", () => {
   console.log("HANDLE:next");
-  //const nextSong = songQueue.next();
-  //audioPlayer.play(nextSong);
-  //return nextSong;
+  songQueue.next();
 });
 
 ipcMain.handle("previous", () => {
   console.log("HANDLE:previous");
-  //const previousSong = songQueue.previous();
-  //audioPlayer.play(previousSong);
-  //return previousSong;
+  songQueue.previous();
 });
 
 ipcMain.handle("shuffle", () => {

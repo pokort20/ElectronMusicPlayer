@@ -31,8 +31,8 @@ class AudioPlayer {
     }
 
     private set isPlaying(value: boolean) {
-        this.window?.webContents.send("isPlayingChanged", this.isPlaying);
         this._isPlaying = value;
+        this.window?.webContents.send("isPlayingChanged", value);
     }
     private get isPlaying(): boolean {
         return this._isPlaying;
@@ -76,20 +76,24 @@ class AudioPlayer {
         if(song == null)return this.isPlaying;
         if (this.isPlaying) {
             this.pause();
-            console.log("AudioPlayer: Paused");
         }
         else {
             this.resume();
-            console.log("AudioPlayer: Playing");
         }
         this.isPlaying = !this.isPlaying;
         return this.isPlaying;
     }
     async pause(): Promise<void> {
-        if (this.stream) this.stream.pause();
+        if (this.stream){
+            console.log("AudioPlayer: Paused");
+            this.stream.pause();
+        } 
     }
     async resume(): Promise<void> {
-        if (this.stream) this.stream.resume();
+        if (this.stream){
+            console.log("AudioPlayer: Playing");
+            this.stream.resume();
+        } 
     }
     async mute(): Promise<void> {
         if (this.isMuted) {
@@ -127,7 +131,7 @@ class AudioPlayer {
     }
 
     async seekTo(seconds: number): Promise<void> {
-        console.log('Seek is not implemented yet. It requires re-creating the stream with a time offset using FFmpeg.');
+        console.log("not implemented yet");
     }
 
     isPlayerInitiated(): boolean {

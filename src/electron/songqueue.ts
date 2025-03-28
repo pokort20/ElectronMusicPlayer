@@ -1,6 +1,7 @@
 import { Song } from './models/Song.js';
 import { BrowserWindow } from "electron";
 import ld from 'lodash';
+import audioplayer from './audioplayer.js';
 
 export class SongQueue {
     private queue: Song[];
@@ -17,15 +18,15 @@ export class SongQueue {
         this._repeat = false;
     }
     public set shuffle(value: boolean){
-        this.window?.webContents.send("shuffleChanged", this.shuffle);
         this._shuffle = value;
+        this.window?.webContents.send("shuffleChanged", value);
     }
     public get shuffle(): boolean{
         return this._shuffle;
     }
     public set repeat(value: boolean){
-        this.window?.webContents.send("repeatChanged", this.repeat);
         this._repeat = value;
+        this.window?.webContents.send("repeatChanged", value);
     }
     public get repeat(): boolean{
         return this._repeat;
@@ -45,7 +46,9 @@ export class SongQueue {
         this.shuffle = !this.shuffle;
         if(this.shuffle)
         {
-           ld.shuffle(this.queue);
+           //ld.shuffle(this.queue);
+           this.shuffleQueue(false);
+           this.window?.webContents.send("songQueueChanged", this.queue);
         }
     }
     public Repeat(): void{
@@ -57,6 +60,7 @@ export class SongQueue {
                 let index = this.queue.findIndex(s => s.id === value.id);
                 this.queue = this.queue.slice(index + 1);
                 console.log("song was in queue");
+                this.window?.webContents.send("songQueueChanged", this.queue);
             }
             if(value)
             {
@@ -66,6 +70,7 @@ export class SongQueue {
                     duration: value.duration,
                     artistNames: value.artistNames,
                   });
+                  audioplayer.play(value);
             }
 
             this._currentPlayingSong = value;
@@ -125,12 +130,13 @@ export class SongQueue {
         this.queue = this.queue.filter(s => s.id !== song.id);
     }
 
-    public next(repeat: boolean): Song | null {
+    public next(): Song | null {
         if (this.currentPlayingSong && this.queue.length > 0) {
-            if (!repeat) {
+            if (!this.repeat) {
                 const nextSong = this.queue.shift()!;
                 this.playedSongs.push(this.currentPlayingSong);
                 this.currentPlayingSong = nextSong;
+                this.window?.webContents.send("songQueueChanged", this.queue);
             }
         }
         return this.currentPlayingSong;
@@ -141,6 +147,7 @@ export class SongQueue {
             const previousSong = this.playedSongs.pop()!;
             this.queue.unshift(this.currentPlayingSong);
             this.currentPlayingSong = previousSong;
+            this.window?.webContents.send("songQueueChanged", this.queue);
         }
         return this.currentPlayingSong;
     }
