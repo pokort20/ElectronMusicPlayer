@@ -40,7 +40,6 @@ export function useMainViewModel() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   // --- Command logic ---
   //modal
 
@@ -55,6 +54,8 @@ export function useMainViewModel() {
   };
   const addPlaylistCommand = useCallback((playlistname: string) => {
     console.log("adding playlist: ", playlistname);
+    //@ts-ignore
+    window.api.addNewPlaylist(1, playlistname);
   }, []);
 
   //Player controls
@@ -121,6 +122,11 @@ export function useMainViewModel() {
     //@ts-ignore
     window.electron.mute();
   }, []);
+  const contextMenuCommand = useCallback((item: any) => {
+    const accountId = 1;
+    //@ts-ignore
+    window.electron.showContextMenu(accountId, item);
+  }, []);
 
 
 
@@ -137,10 +143,10 @@ export function useMainViewModel() {
 
   // --- Effects ---
   useEffect(() => {
+    //load from db later 
     const accountId = 1;
     console.log("loading all data");
     //@ts-ignore
-    //window.api.loadPlaylists(accountId).then(setPlaylists);
     window.api.loadPlaylists(accountId).then(setPlaylists);
     //@ts-ignore
     window.api.loadArtists(accountId).then(setArtists);
@@ -166,7 +172,9 @@ export function useMainViewModel() {
       previousVolume.current = volume;
     }
   }, [volume]);
-
+  useEffect(() => {
+    console.log("isModalOpen:", isModalOpen);
+  }, [isModalOpen])
   useEffect(() => {
     // @ts-ignore
     window.electron.subVolume((v: number) => {
@@ -190,6 +198,38 @@ export function useMainViewModel() {
       setSongQueue(queue);
     });
   }, []);
+  useEffect(() => {
+    // @ts-ignore
+    window.electron.albumsChanged((updated: Album[]) => {
+      console.log("albumsChanged");
+      setAlbums(updated);
+    });
+  }, []);
+  
+  useEffect(() => {
+    // @ts-ignore
+    window.electron.playlistsChanged((updated: Playlist[]) => {
+      console.log("playlistsChanged");
+      setPlaylists(updated);
+    });
+  }, []);
+  
+  useEffect(() => {
+    // @ts-ignore
+    window.electron.artistsChanged((updated: Artist[]) => {
+      console.log("artistsChanged", artists);
+      setArtists(updated);
+    });
+  }, []);
+  
+  useEffect(() => {
+    // @ts-ignore
+    window.electron.podcastsChanged((updated: Podcast[]) => {
+      console.log("podcastsChanged");
+      setPodcasts(updated);
+    });
+  }, []);
+
 
   useEffect(() => {
     // @ts-ignore
@@ -338,6 +378,7 @@ export function useMainViewModel() {
     repeatCommand,
     muteCommand,
     homeCommand,
-    addPlaylistCommand
+    addPlaylistCommand,
+    contextMenuCommand
   };
 }

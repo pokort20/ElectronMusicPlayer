@@ -5,6 +5,22 @@ import { Artist } from '../models/Artist.js';
 import { Podcast } from '../models/Podcast.js';
 import { Album } from '../models/Album.js';
 
+export async function addNewPlaylist(accountId: number, name: string): Promise<void> {
+  console.log("datahandler adding playlist:", name);
+  const result = await query(
+    `
+    WITH new_playlist AS (
+      INSERT INTO playlist (name)
+      VALUES ($1)
+      RETURNING id
+    )
+    INSERT INTO account_playlist (accountid, playlistid)
+    SELECT $2, id FROM new_playlist
+    `,
+    [name, accountId]
+  );
+}
+
 export async function searchSongs(searchTerm: string): Promise<Song[]> {
   const result = await query(
     `
@@ -215,13 +231,11 @@ export async function getSuggestedSongs(accountId: number, count: number): Promi
 }
 export async function getSuggestedArtists(accountId: number, count: number): Promise<Artist[]> {
   const result = await query(
-    `SELECT artist.id, artist.name
+    `SELECT *
      FROM artist
-     JOIN account_artist ON artist.id = account_artist.artistid
-     WHERE account_artist.accountid = $1
      ORDER BY RANDOM()
-     LIMIT $2`,
-    [accountId, count]
+     LIMIT $1`,
+    [count]
   );
   return result.rows;
 }
@@ -235,4 +249,171 @@ export async function getAuthorsBySong(songId: number): Promise<string> {
   );
   const names = result.rows.map(row => row.name);
   return names.join(", ");
+}
+export async function addToPlaylist(accountId: number, song: any, playlist: any): Promise<void>{
+  await query(
+    `
+    INSERT INTO song_playlist (songid, playlistid)
+    VALUES ($1, $2)
+    ON CONFLICT DO NOTHING
+    `,
+    [song.id, playlist.id]
+  );
+  console.log("datahandler adding ", song, " to playlist ", playlist);
+}
+export async function addToFavourites(accountId: number, object: any): Promise<void> {
+  switch (object?.type.toLowerCase()) {
+    case 'song':
+      await query(
+        `
+        INSERT INTO account_song (accountid, songid)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'album':
+      await query(
+        `
+        INSERT INTO account_album (accountid, albumid)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'artist':
+      await query(
+        `
+        INSERT INTO account_artist (accountid, artistid)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'podcast':
+      await query(
+        `
+        INSERT INTO account_podcast (accountid, podcastid)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    default:
+      console.log("unable to add unknown type to favourites:", object?.type);
+  }
+  console.log("datahandler added item to favourites");
+}
+export async function isInFavourites(accountId: number, object: any): Promise<boolean> {
+  let result;
+
+  switch (object?.type.toLowerCase()) {
+    case 'song':
+      result = await query(
+        `
+        SELECT 1 FROM account_song
+        WHERE accountid = $1 AND songid = $2
+        LIMIT 1
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'album':
+      result = await query(
+        `
+        SELECT 1 FROM account_album
+        WHERE accountid = $1 AND albumid = $2
+        LIMIT 1
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'artist':
+      result = await query(
+        `
+        SELECT 1 FROM account_artist
+        WHERE accountid = $1 AND artistid = $2
+        LIMIT 1
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'podcast':
+      result = await query(
+        `
+        SELECT 1 FROM account_podcast
+        WHERE accountid = $1 AND podcastid = $2
+        LIMIT 1
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    default:
+      console.log("unable to check unknown type in favourites:", object?.type);
+      return false;
+  }
+  if(result?.rowCount)
+  {
+    return result?.rowCount > 0;
+  }
+  return false;
+}
+export async function removeFromFavourites(accountId: number, object: any): Promise<void> {
+  switch (object?.type.toLowerCase()) {
+    case 'song':
+      await query(
+        `
+        DELETE FROM account_song
+        WHERE accountid = $1 AND songid = $2
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'album':
+      await query(
+        `
+        DELETE FROM account_album
+        WHERE accountid = $1 AND albumid = $2
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'artist':
+      await query(
+        `
+        DELETE FROM account_artist
+        WHERE accountid = $1 AND artistid = $2
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    case 'podcast':
+      await query(
+        `
+        DELETE FROM account_podcast
+        WHERE accountid = $1 AND podcastid = $2
+        `,
+        [accountId, object.id]
+      );
+      break;
+
+    default:
+      console.log("unable to remove unknown type from favourites:", object?.type);
+  }
+  console.log("datahandler removed item from favourites");
 }

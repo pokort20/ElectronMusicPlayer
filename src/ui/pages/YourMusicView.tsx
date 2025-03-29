@@ -15,7 +15,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
 
                 <div className="dock" style={{ gridRow: 2 }}>
                     <span className="label baseH2" style={{ marginLeft: 20 }}>Playlists</span>
-                    <button className="button transparent" onClick={vm.openModal}>
+                    <button className="button transparent" onClick={ () => {vm.openModal, vm.setIsModalOpen(!vm.isModalOpen);}}>
                         <img src="/assets/Images/plus.png" />
                     </button>
                 </div>
@@ -41,7 +41,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <span className="label baseH2 dock" style={{ gridRow: 4, marginLeft: 20 }}>Artists</span>
                 <div className="scroll" style={{ gridRow: 5 }}>
                     {vm.artists.map(a => (
-                        <div key={a.id} className="border song dock">
+                        <div key={a.id} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Artist', id: a.id, name: a.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div>{a.name}</div>
@@ -56,7 +56,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <span className="label baseH2 dock" style={{ gridRow: 6, marginLeft: 20 }}>Albums</span>
                 <div className="scroll" style={{ gridRow: 7 }}>
                     {vm.albums.map(a => (
-                        <div key={a.id} className="border song dock">
+                        <div key={a.id} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Album', id: a.id, name: a.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div className="stack leftV">
@@ -74,7 +74,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                 <span className="label baseH2 dock" style={{ gridRow: 8, marginLeft: 20 }}>Podcasts</span>
                 <div className="scroll" style={{ gridRow: 9 }}>
                     {vm.podcasts.map(p => (
-                        <div key={p.id} className="border song dock">
+                        <div key={p.id} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Podcast', id: p.id, name: p.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div>{p.name}</div>

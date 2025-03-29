@@ -12,7 +12,7 @@ const QueueSuggestionsView: React.FC<QueueSuggestionsViewProps> = ({ vm }) => {
                 <div className="label baseH1 dock" style={{ marginLeft: 5 }}>Queue</div>
                 <div className="scroll">
                     {vm.songQueue.map((s, index) => (
-                        <div key={index} className="border song dock">
+                        <div key={index} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Song', id: s.id, name: s.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div className="stack leftV">
@@ -29,7 +29,7 @@ const QueueSuggestionsView: React.FC<QueueSuggestionsViewProps> = ({ vm }) => {
                 <span className="label baseH1 dock" style={{ marginLeft: 5 }}>Suggestions</span>
                 <div className="scroll">
                     {vm.suggestedSongs.map((song, index) => (
-                        <div key={index} className="border song dock">
+                        <div key={index} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Song', id: song.id, name: song.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div className="stack leftV">

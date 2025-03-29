@@ -43,31 +43,31 @@ class AudioPlayer {
     }
 
     async play(song: Song | null): Promise<boolean> {
-        if(this.isPlaying)this.stop();
+        // if(this.isPlaying)this.stop();
 
         this.isPlaying = true;
-        const filePath = path.resolve(__dirname, '../public/assets/Sounds/0.mp3');
+        // const filePath = path.resolve(__dirname, '../public/assets/Sounds/0.mp3');
 
-        this.stream = fs.createReadStream(filePath);
-        this.ffmpeg = new prism.FFmpeg({
-            args: ['-analyzeduration', '0', '-loglevel', '0', '-i', 'pipe:0', '-f', 's16le', '-ar', '48000', '-ac', '2'],
-        });
+        // this.stream = fs.createReadStream(filePath);
+        // this.ffmpeg = new prism.FFmpeg({
+        //     args: ['-analyzeduration', '0', '-loglevel', '0', '-i', 'pipe:0', '-f', 's16le', '-ar', '48000', '-ac', '2'],
+        // });
 
-        this.volumeNode = new Volume();
-        this.volumeNode.setVolume(this._volume);
+        // this.volumeNode = new Volume();
+        // this.volumeNode.setVolume(this._volume);
 
-        this.speaker = new Speaker({
-            channels: 2,
-            bitDepth: 16,
-            sampleRate: 48000,
-        });
+        // this.speaker = new Speaker({
+        //     channels: 2,
+        //     bitDepth: 16,
+        //     sampleRate: 48000,
+        // });
 
-        this.stream
-            .pipe(this.ffmpeg)
-            .pipe(this.volumeNode)
-            .pipe(this.speaker);
+        // this.stream
+        //     .pipe(this.ffmpeg)
+        //     .pipe(this.volumeNode)
+        //     .pipe(this.speaker);
 
-        this.isInitiated = true;
+        // this.isInitiated = true;
         console.log("AudioPlayer: playing song");
 
         return this.isPlaying;

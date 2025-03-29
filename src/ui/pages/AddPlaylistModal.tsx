@@ -17,31 +17,19 @@ const AddPlaylistModal: React.FC<AddPlaylistModalProps> = ({ onAddPlaylist, onCl
   };
 
   return (
-    <div className="border base">
-      <div className="modal-container">
-        <h1 className="modal-title">Add new playlist</h1>
+    <div className="border modal">
+      <span className="label baseH1" style={{marginBottom:10}}>Add new playlist</span>
 
-        <label className="modal-label">Playlist name</label>
-        <input
-          className="modal-input"
-          type="text"
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-        />
+      <span className="label baseH2">Playlist name</span>
+      <input className="textbox base" style={{margin:10}} type="text" value={playlistName} onChange={(e) => setPlaylistName(e.target.value)} />
+      <div className="stack baseH">
+      <button className="button round" style={{margin: 5}} onClick={handleAddPlaylist}>
+        Add playlist
+      </button>
 
-        <button
-          onClick={handleAddPlaylist}
-          className="modal-button primary"
-        >
-          Add playlist
-        </button>
-
-        <button
-          onClick={onClose}
-          className="modal-button secondary"
-        >
-          Cancel
-        </button>
+      <button className="button round" onClick={onClose}>
+        Cancel
+      </button>
       </div>
     </div>
   );

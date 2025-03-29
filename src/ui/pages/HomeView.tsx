@@ -13,7 +13,7 @@ const HomeView: React.FC<HomeViewProps> = ({ vm }) => {
             <span className="label baseH2" style={{ gridRow: 2, gridColumn: 2 }}>Artists</span>
             <div className="scroll" style={{ gridRow: 3, gridColumn: 1 }}>
                 {vm.trendingSongs.map((s, index) => (
-                    <div key={index} className="border song dock" style={{ margin: "6px 20px 6px 25px" }}>
+                    <div key={index} className="border song dock" style={{ margin: "6px 20px 6px 25px" }}  onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Song', id: s.id, name: s.name})}}>
                         <div className="horizontal">
                             <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                             <div className="stack leftV">
@@ -29,7 +29,7 @@ const HomeView: React.FC<HomeViewProps> = ({ vm }) => {
             </div>
             <div className="wrap scroll" style={{ gridRow: 3, gridColumn: 2 }}>
                 {vm.trendingArtists.map((artist, index) => (
-                    <div key={index} className="border card">
+                    <div key={index} className="border card" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Artist', id: artist.id, name: artist.name})}}>
                         <button onClick={() => vm.playArtistCommand(artist.id)}>
                             <img className="cardImage" src="/assets/Images/account.png" width={86} height={86} />
                         </button>

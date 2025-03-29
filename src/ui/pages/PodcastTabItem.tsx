@@ -10,7 +10,7 @@ const PodcastTabItem: React.FC<PodcastTabItemProps> = ({ vm }) => {
         <div className="scroll" style={{ maxHeight: 574 }}>
             <div className="wrap" style={{ flexDirection: "column", alignItems: "center", gap: 16 }}>
                 {vm.searchPodcasts.map((podcast, index) => (
-                    <div key={index} className="border podcast">
+                    <div key={index} className="border podcast" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Podcast', id: podcast.id, name: podcast.name})}}>
                         <div className="horizontal" style={{margin: "20px"}}>
                             <button onClick={() => vm.playPodcastCommand(podcast.id)}>
                                 <img src="/assets/Images/account.png" width={120} height={120} />

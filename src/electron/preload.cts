@@ -1,4 +1,9 @@
 import type { Song } from "./models/Song.js" with { "resolution-mode": "import" };
+import type { Album } from "./models/Album.js" with { "resolution-mode": "import" };
+import type { Playlist } from "./models/Playlist.js" with { "resolution-mode": "import" };
+import type { Artist } from "./models/Artist.js" with { "resolution-mode": "import" };
+import type { Podcast } from "./models/Podcast.js" with { "resolution-mode": "import" };
+
 
 const electron = require('electron');
 
@@ -51,6 +56,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
         console.log("PRELOAD:repeat");
         return electron.ipcRenderer.invoke("repeat");
     },
+    showContextMenu: (accountId: number, object: any) => {
+        console.log("PRELOAD:showContextMenu");
+        electron.ipcRenderer.invoke("showContextMenu", accountId, object)
+    },
 
 
 
@@ -78,6 +87,34 @@ electron.contextBridge.exposeInMainWorld("electron", {
             callback(data);
         });
     },
+    albumsChanged: (callback: (albums: Album[]) => void) => {
+        console.log("PRELOAD:subAlbumsChanged");
+        electron.ipcRenderer.on("albumsChanged", (_: any, data: Album[]) => {
+            callback(data);
+        });
+    },
+
+    playlistsChanged: (callback: (playlists: Playlist[]) => void) => {
+        console.log("PRELOAD:subPlaylistsChanged");
+        electron.ipcRenderer.on("playlistsChanged", (_: any, data: Playlist[]) => {
+            callback(data);
+        });
+    },
+
+    artistsChanged: (callback: (artists: Artist[]) => void) => {
+        console.log("PRELOAD:subArtistsChanged");
+        electron.ipcRenderer.on("artistsChanged", (_: any, data: Artist[]) => {
+            callback(data);
+        });
+    },
+
+    podcastsChanged: (callback: (podcasts: Podcast[]) => void) => {
+        console.log("PRELOAD:subPodcastsChanged");
+        electron.ipcRenderer.on("podcastsChanged", (_: any, data: Podcast[]) => {
+            callback(data);
+        });
+    },
+
     isPlayingChanged: (callback: (isPlaying: boolean) => void) => {
         console.log("PRELOAD:isPlayingChanged");
         electron.ipcRenderer.on("isPlayingChanged", (_: any, data: boolean) => {
@@ -101,6 +138,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
 
 
 electron.contextBridge.exposeInMainWorld("api", {
+    addNewPlaylist: (accountId: number, name: string) => {
+        console.log("PRELOAD:addNewPlaylist, accountid: ", accountId, " name:", name);
+        return electron.ipcRenderer.invoke("add-new-playlist", accountId, name);
+    },
     loadPlaylists: (accountId: number) => {
         console.log("PRELOAD:loadPlaylists", accountId);
         return electron.ipcRenderer.invoke("load-playlists", accountId);
