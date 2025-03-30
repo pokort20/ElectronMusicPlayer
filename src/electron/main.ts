@@ -6,6 +6,7 @@ import audioPlayer from './audioplayer.js';
 import songQueue from './songqueue.js';
 import audioplayer from "./audioplayer.js";
 import songqueue from "./songqueue.js";
+import { Playlist } from "./models/Playlist.js";
 
 app.on("ready", () => {
   const apppath = path.join(app.getAppPath(), './dist-electron/preload.cjs');
@@ -141,7 +142,7 @@ app.on("ready", () => {
         }
       });
     }
-    else{
+    else {
       template.push({
         label: 'Add to favourites',
         click: async () => {
@@ -152,26 +153,26 @@ app.on("ready", () => {
               mainWindow.webContents.send("albumsChanged", await dataHandler.getAlbumsByAccount(accountId));
               break;
             }
-  
+
             case 'artist': {
               mainWindow.webContents.send("artistsChanged", await dataHandler.getArtistsByAccount(accountId));
               break;
             }
-  
+
             case 'podcast': {
               mainWindow.webContents.send("podcastsChanged", await dataHandler.getPodcastsByAccount(accountId));
               break;
             }
-  
+
             case 'playlist': {
               mainWindow.webContents.send("playlistsChanged", await dataHandler.getPlaylistsByAccount(accountId));
               break;
             }
-  
+
             default:
               console.log("unable to add unknown type to favourites:", object?.type);
           }
-  
+
         }
       },)
     }
@@ -179,12 +180,14 @@ app.on("ready", () => {
       let submenuTemplate: MenuItemConstructorOptions[] = [];
       await dataHandler.getPlaylistsByAccount(accountId).then(playlists => {
         playlists.forEach(p => {
-          submenuTemplate.push({
-            label: p.name,
-            click: () => {
-              dataHandler.addToPlaylist(accountId, object, p);
-            }
-          },)
+          if (p.ownerid == accountId) {
+            submenuTemplate.push({
+              label: p.name,
+              click: () => {
+                dataHandler.addToPlaylist(accountId, object, p);
+              }
+            })
+          }
         });
       });
       template.push({
@@ -192,11 +195,23 @@ app.on("ready", () => {
         submenu: submenuTemplate
       },)
     }
- 
-    template.push({
-      label: 'Inspect Element',
-      click: () => win.webContents.openDevTools()
-    });
+    if (object?.type.toLowerCase() === 'playlist') {
+      const playlist = object as Playlist;
+      if (playlist.ownerid === accountId) {
+        template.push({
+          label: 'Delete playlist',
+          click: async () => {
+            await dataHandler.deletePlaylist(accountId, playlist.id);
+            mainWindow.webContents.send("playlistsChanged", await dataHandler.getPlaylistsByAccount(accountId));
+          }
+        },)
+      }
+    }
+
+    // template.push({
+    //   label: 'Inspect Element',
+    //   click: () => win.webContents.openDevTools()
+    // });
 
 
     const menu = Menu.buildFromTemplate(template);
@@ -218,7 +233,7 @@ app.on("ready", () => {
   });
 
   //API handles
-  ipcMain.handle("add-new-playlist", async(_, accountId: number, name: string) => {
+  ipcMain.handle("add-new-playlist", async (_, accountId: number, name: string) => {
     console.log("HANDLE:add-new-playlist", name);
     await dataHandler.addNewPlaylist(accountId, name);
     mainWindow.webContents.send("playlistsChanged", await dataHandler.getPlaylistsByAccount(accountId));

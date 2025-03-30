@@ -1,5 +1,5 @@
 import { query } from './db.js';
-import { Song} from '../models/Song.js';
+import { Song } from '../models/Song.js';
 import { Playlist } from '../models/Playlist.js';
 import { Artist } from '../models/Artist.js';
 import { Podcast } from '../models/Podcast.js';
@@ -10,14 +10,33 @@ export async function addNewPlaylist(accountId: number, name: string): Promise<v
   const result = await query(
     `
     WITH new_playlist AS (
-      INSERT INTO playlist (name)
-      VALUES ($1)
+      INSERT INTO playlist (name, ownerid)
+      VALUES ($1, $2)
       RETURNING id
     )
     INSERT INTO account_playlist (accountid, playlistid)
     SELECT $2, id FROM new_playlist
     `,
     [name, accountId]
+  );
+}
+export async function deletePlaylist(accountId: number, playlistId: number): Promise<void> {
+  console.log("datahandler deleting playlist:", playlistId);
+
+  await query(
+    `
+    DELETE FROM account_playlist
+    WHERE accountid = $1 AND playlistid = $2
+    `,
+    [accountId, playlistId]
+  );
+
+  await query(
+    `
+    DELETE FROM playlist
+    WHERE id = $1
+    `,
+    [playlistId]
   );
 }
 
@@ -161,13 +180,13 @@ export async function getSongsByAlbum(albumId: number): Promise<Song[]> {
 //account collections
 export async function getPlaylistsByAccount(accountId: number): Promise<Playlist[]> {
   const result = await query(
-    `SELECT playlist.id, playlist.name, playlist.icon
+    `SELECT *
      FROM playlist
      JOIN account_playlist ON playlist.id = account_playlist.playlistid
      WHERE account_playlist.accountid = $1`,
     [accountId]
   );
-  return result.rows;  
+  return result.rows;
 }
 export async function getArtistsByAccount(accountId: number): Promise<Artist[]> {
   const result = await query(
@@ -250,7 +269,7 @@ export async function getAuthorsBySong(songId: number): Promise<string> {
   const names = result.rows.map(row => row.name);
   return names.join(", ");
 }
-export async function addToPlaylist(accountId: number, song: any, playlist: any): Promise<void>{
+export async function addToPlaylist(accountId: number, song: any, playlist: any): Promise<void> {
   await query(
     `
     INSERT INTO song_playlist (songid, playlistid)
@@ -300,6 +319,16 @@ export async function addToFavourites(accountId: number, object: any): Promise<v
       await query(
         `
         INSERT INTO account_podcast (accountid, podcastid)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        `,
+        [accountId, object.id]
+      );
+      break;
+    case 'playlist':
+      await query(
+        `
+        INSERT INTO account_playlist (accountid, playlistid)
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING
         `,
@@ -359,13 +388,22 @@ export async function isInFavourites(accountId: number, object: any): Promise<bo
         [accountId, object.id]
       );
       break;
+    case 'playlist':
+      result = await query(
+        `
+        SELECT 1 FROM account_playlist
+        WHERE accountid = $1 AND playlistid = $2
+        LIMIT 1
+        `,
+        [accountId, object.id]
+      );
+      break;
 
     default:
       console.log("unable to check unknown type in favourites:", object?.type);
       return false;
   }
-  if(result?.rowCount)
-  {
+  if (result?.rowCount) {
     return result?.rowCount > 0;
   }
   return false;
@@ -407,6 +445,15 @@ export async function removeFromFavourites(accountId: number, object: any): Prom
         `
         DELETE FROM account_podcast
         WHERE accountid = $1 AND podcastid = $2
+        `,
+        [accountId, object.id]
+      );
+      break;
+    case 'playlist':
+      await query(
+        `
+        DELETE FROM account_playlist
+        WHERE accountid = $1 AND playlistid = $2
         `,
         [accountId, object.id]
       );

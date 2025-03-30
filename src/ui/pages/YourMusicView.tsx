@@ -26,7 +26,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
                     />)}
                 <div className="scroll" style={{ gridRow: 3 }}>
                     {vm.playlists.map(p => (
-                        <div key={p.id} className="border song dock">
+                        <div key={p.id} className="border song dock" onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Playlist', id: p.id, ownerid: p.ownerid, name: p.name})}}>
                             <div className="horizontal">
                                 <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                                 <div>{p.name}</div>

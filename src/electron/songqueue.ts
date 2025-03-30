@@ -56,14 +56,19 @@ export class SongQueue {
     }
     public set currentPlayingSong(value: Song | null) {
         if (this.currentPlayingSong !== value) {
-            if (value && this.queue.find(s => s.id === value.id)) {
-                let index = this.queue.findIndex(s => s.id === value.id);
-                this.queue = this.queue.slice(index + 1);
-                console.log("song was in queue");
-                this.window?.webContents.send("songQueueChanged", this.queue);
-            }
             if(value)
             {
+                if(this.queue.find(s => s.id === value.id))
+                {
+                    let index = this.queue.findIndex(s => s.id === value.id);
+                    this.queue = this.queue.slice(index + 1);
+                    console.log("song was in queue");
+                    this.window?.webContents.send("songQueueChanged", this.queue);
+                    if(this.currentPlayingSong)
+                    {
+                        this.playedSongs.push(this.currentPlayingSong);
+                    }
+                }
                 console.log("Current playing song changed to:", {
                     id: value.id,
                     name: value.name,

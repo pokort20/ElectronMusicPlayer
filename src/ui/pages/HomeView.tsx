@@ -43,7 +43,7 @@ const HomeView: React.FC<HomeViewProps> = ({ vm }) => {
             <span className="label baseH2" style={{ gridRow: 5, gridColumn: 2 }}>Artists</span>
             <div className="scroll" style={{ gridRow: 6, gridColumn: 1 }}>
                 {vm.suggestedSongs.map((s, index) => (
-                    <div key={index} className="border song dock" style={{ margin: "6px 20px 6px 25px" }}>
+                    <div key={index} className="border song dock" style={{ margin: "6px 20px 6px 25px" }} onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Song', id: s.id, name: s.name})}}>
                         <div className="horizontal">
                             <img src="/assets/Images/home.png" alt="icon" className="img icon" />
                             <div className="stack leftV">
@@ -60,7 +60,7 @@ const HomeView: React.FC<HomeViewProps> = ({ vm }) => {
             <div className="wrap scroll" style={{ gridRow: 6, gridColumn: 2 }}>
                 {vm.suggestedArtists.map((artist, index) => (
                     <div key={index} className="border card">
-                        <button onClick={() => vm.playArtistCommand(artist.id)}>
+                        <button onClick={() => vm.playArtistCommand(artist.id)} onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Artist', id: artist.id, name: artist.name})}}>
                             <img className="cardImage" src="/assets/Images/account.png" width={86} height={86} />
                         </button>
                         <span className="label base" style={{ fontSize: 16, textAlign: "center" }}>{artist.name}</span>

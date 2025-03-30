@@ -10,7 +10,7 @@ const SongTabItem: React.FC<SongTabItemProps> = ({ vm }) => {
     <div className="scroll"  style={{ maxHeight: 574}}>
       {vm.searchSongs.map((song, index) => (
         <div key={index} className="border song">
-          <div className="grid" style={{ width: "100%", gridTemplateColumns: "auto 1fr auto" }}>
+          <div className="grid" style={{ width: "100%", gridTemplateColumns: "auto 1fr auto" }} onContextMenu={ (e) => {e.preventDefault(); vm.contextMenuCommand( {type: 'Song', id: song.id, name: song.name})}}>
             <img
               src="/assets/Images/home.png"
               width={25}
