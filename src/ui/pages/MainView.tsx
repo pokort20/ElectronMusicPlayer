@@ -20,14 +20,14 @@ export default function MainView() {
 
         <PlayerControlsView vm={vm} />
 
-        {/* empty section */}
+        {/* empty */}
         <div className="border base"></div>
       </div>
 
       <div className="grid" style={{ gridTemplateColumns: "256px 1fr 256px", height: "100%" }}>
         <YourMusicView vm={vm} />
 
-        {/* Center content */}
+        {/* center content that is changing (tabs, home screne) */}
         <div className="border base">
           <div className="grid" style={{ gridTemplateRows: "auto 1fr" }}>
             <div className="stack baseH" style={{ gridTemplateColumns: "auto auto 1fr auto" }}>
@@ -59,7 +59,6 @@ export default function MainView() {
               </button>
             </div>
             <div>
-              {/* Conditional rendering */}
               {vm.isHomePageVisible ? <HomeView vm={vm} /> : <div></div>}
               {vm.isTabControlVisible && (
                 <div className="tab-control">
@@ -87,7 +86,6 @@ export default function MainView() {
           </div>
         </div>
 
-        {/* Right panel (queue + suggestions) */}
         <QueueSuggestionsView vm={vm} />
       </div>
     </div>

@@ -17,73 +17,67 @@ export class SongQueue {
         this._shuffle = false;
         this._repeat = false;
     }
-    public set shuffle(value: boolean){
+    public set shuffle(value: boolean) {
         this._shuffle = value;
         this.window?.webContents.send("shuffleChanged", value);
     }
-    public get shuffle(): boolean{
+    public get shuffle(): boolean {
         return this._shuffle;
     }
-    public set repeat(value: boolean){
+    public set repeat(value: boolean) {
         this._repeat = value;
         this.window?.webContents.send("repeatChanged", value);
     }
-    public get repeat(): boolean{
+    public get repeat(): boolean {
         return this._repeat;
     }
 
 
-    public set window(window: BrowserWindow | null){
+    public set window(window: BrowserWindow | null) {
         this._window = window;
     }
-    public get window(): BrowserWindow | null{
+    public get window(): BrowserWindow | null {
         return this._window;
     }
     public get currentPlayingSong(): Song | null {
         return this._currentPlayingSong;
     }
-    public Shuffle(): void{
+    public Shuffle(): void {
         this.shuffle = !this.shuffle;
-        if(this.shuffle)
-        {
-           //ld.shuffle(this.queue);
-           this.shuffleQueue(false);
-           this.window?.webContents.send("songQueueChanged", this.queue);
+        if (this.shuffle) {
+            //ld.shuffle(this.queue);
+            this.shuffleQueue(false);
+            this.window?.webContents.send("songQueueChanged", this.queue);
         }
     }
-    public Repeat(): void{
+    public Repeat(): void {
         this.repeat = !this.repeat;
     }
     public set currentPlayingSong(value: Song | null) {
-        if (this.currentPlayingSong !== value) {
-            if(value)
-            {
-                if(this.queue.find(s => s.id === value.id))
-                {
-                    let index = this.queue.findIndex(s => s.id === value.id);
-                    this.queue = this.queue.slice(index + 1);
-                    console.log("song was in queue");
-                    this.window?.webContents.send("songQueueChanged", this.queue);
-                    if(this.currentPlayingSong)
-                    {
-                        this.playedSongs.push(this.currentPlayingSong);
-                    }
+        if (value) {
+            if (this.queue.find(s => s.id === value.id)) {
+                let index = this.queue.findIndex(s => s.id === value.id);
+                this.queue = this.queue.slice(index + 1);
+                console.log("song was in queue");
+                this.window?.webContents.send("songQueueChanged", this.queue);
+                if (this.currentPlayingSong) {
+                    this.playedSongs.push(this.currentPlayingSong);
                 }
-                console.log("Current playing song changed to:", {
-                    id: value.id,
-                    name: value.name,
-                    duration: value.duration,
-                    artistNames: value.artistNames,
-                  });
-                  audioplayer.play(value);
             }
-
-            this._currentPlayingSong = value;
-            this.window?.webContents.send("songDescriptionChanged", {
-                name: this.currentPlayingSong?.name,
-                artist: this.currentPlayingSong?.artistNames
+            console.log("Current playing song changed to:", {
+                id: value.id,
+                name: value.name,
+                duration: value.duration,
+                artistNames: value.artistNames,
             });
+            audioplayer.play(value);
         }
+
+        this._currentPlayingSong = value;
+        this.window?.webContents.send("songDescriptionChanged", {
+            name: this.currentPlayingSong?.name,
+            artist: this.currentPlayingSong?.artistNames
+        });
     }
 
     public clearQueue(): void {
@@ -136,6 +130,9 @@ export class SongQueue {
     }
 
     public next(): Song | null {
+        if (this.repeat && this.currentPlayingSong) {
+            this.currentPlayingSong = this.currentPlayingSong;
+        }
         if (this.currentPlayingSong && this.queue.length > 0) {
             if (!this.repeat) {
                 const nextSong = this.queue.shift()!;

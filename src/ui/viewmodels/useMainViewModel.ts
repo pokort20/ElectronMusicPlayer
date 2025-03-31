@@ -4,7 +4,7 @@ import { Song, Album, Playlist, Artist, Podcast } from "../../electron/models/";
 export type MainViewModel = ReturnType<typeof useMainViewModel>;
 
 export function useMainViewModel() {
-  // --- State variables ---
+  //State variables
   const [songName, setSongName] = useState("SongName");
   const [authorName, setAuthorName] = useState("AuthorName");
   const [timeElapsed, setTimeElapsed] = useState("1:01");
@@ -23,7 +23,7 @@ export function useMainViewModel() {
   const [repeat, setRepeat] = useState(false);
   const previousVolume = useRef<number>(volume);
 
-  // --- Collections ---
+  //collections
   const [songQueue, setSongQueue] = useState<Song[]>([]);
   const [suggestedSongs, setSuggestedSongs] = useState<Song[]>([]);
   const [suggestedArtists, setSuggestedArtists] = useState<Song[]>([]);
@@ -40,10 +40,7 @@ export function useMainViewModel() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- Command logic ---
   //modal
-
-
   const openModal = () => {
     console.log("Opening modal");
     setIsModalOpen(true);
@@ -141,7 +138,6 @@ export function useMainViewModel() {
     setIsTabControlVisible(false);
   }, []);
 
-  // --- Effects ---
   useEffect(() => {
     //load from db later 
     const accountId = 1;
@@ -205,6 +201,9 @@ export function useMainViewModel() {
       setAlbums(updated);
     });
   }, []);
+  useEffect(() => {
+    console.log("SongProgress: ", songProgress);
+  }, [songProgress]);
   
   useEffect(() => {
     // @ts-ignore
@@ -295,7 +294,6 @@ export function useMainViewModel() {
   //   //@ts-ignore
   //   window.electron.subVolume((vol) => console.log("volume: ", vol));
   // })
-  // --- Expose everything ---
   return {
     songName,
     setSongName,
@@ -364,7 +362,7 @@ export function useMainViewModel() {
     openModal,
     closeModal,
 
-    // Commands
+    //commands
     changeVolume,
     playSongCommand,
     playPlaylistCommand,

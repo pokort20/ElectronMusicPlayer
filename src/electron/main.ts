@@ -207,7 +207,7 @@ app.on("ready", () => {
         },)
       }
     }
-
+    //for debug purposes only
     // template.push({
     //   label: 'Inspect Element',
     //   click: () => win.webContents.openDevTools()
@@ -216,20 +216,6 @@ app.on("ready", () => {
 
     const menu = Menu.buildFromTemplate(template);
     menu.popup({ window: win });
-  });
-
-
-
-
-
-
-  ipcMain.handle("searchDB", (searchTerm) => {
-    console.log("HANDLE:searchDB");
-    // @ts-ignore
-    return dataHandler.searchSongs(searchTerm).then((songs) => {
-      console.log("HANDLE:searchDB Results:", songs);
-      return songs;
-    });
   });
 
   //API handles

@@ -63,10 +63,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
 
 
 
-    searchDB: (searchTerm: string) => {
-        console.log("PRELOAD:searchDB", searchTerm);
-        return electron.ipcRenderer.invoke("searchDB", searchTerm);
-    },
+    // searchDB: (searchTerm: string) => {
+    //     console.log("PRELOAD:searchDB", searchTerm);
+    //     return electron.ipcRenderer.invoke("searchDB", searchTerm);
+    // },
 
 
     //subscribtions
@@ -130,6 +130,12 @@ electron.contextBridge.exposeInMainWorld("electron", {
     repeatChanged: (callback: (repeat: boolean) => void) => {
         console.log("PRELOAD:repeatChanged");
         electron.ipcRenderer.on("repeatChanged", (_: any, data: boolean) => {
+            callback(data);
+        });
+    },
+    songProgressChanged: (callback: (progress: { elapsed: string, remaining: string }) => void) => {
+        console.log("PRELOAD:songProgressChanged");
+        electron.ipcRenderer.on("songProgressChanged", (_: any, data: { elapsed: string, remaining: string }) => {
             callback(data);
         });
     },

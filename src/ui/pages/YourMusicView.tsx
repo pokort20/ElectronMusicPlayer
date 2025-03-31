@@ -15,7 +15,7 @@ const YourMusicView: React.FC<YourMusicViewProps> = ({ vm }) => {
 
                 <div className="dock" style={{ gridRow: 2 }}>
                     <span className="label baseH2" style={{ marginLeft: 20 }}>Playlists</span>
-                    <button className="button transparent" onClick={ () => {vm.openModal, vm.setIsModalOpen(!vm.isModalOpen);}}>
+                    <button className="button transparent"  title="Add playlist" onClick={ () => {vm.openModal, vm.setIsModalOpen(!vm.isModalOpen);}}>
                         <img src="/assets/Images/plus.png" />
                     </button>
                 </div>

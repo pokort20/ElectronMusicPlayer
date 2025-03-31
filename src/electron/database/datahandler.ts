@@ -25,6 +25,14 @@ export async function deletePlaylist(accountId: number, playlistId: number): Pro
 
   await query(
     `
+    DELETE FROM song_playlist
+    WHERE playlistid = $1
+    `,
+    [playlistId]
+  );
+
+  await query(
+    `
     DELETE FROM account_playlist
     WHERE accountid = $1 AND playlistid = $2
     `,
@@ -43,12 +51,7 @@ export async function deletePlaylist(accountId: number, playlistId: number): Pro
 export async function searchSongs(searchTerm: string): Promise<Song[]> {
   const result = await query(
     `
-    SELECT s.id,
-           s.name,
-           s.duration,
-           s.icon,
-           s.data,
-           COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
+    SELECT s.id, s.name, s.duration, s.icon, s.data, COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
     FROM song s
     LEFT JOIN song_artist sa ON s.id = sa.songid
     LEFT JOIN artist a ON sa.artistid = a.id
@@ -119,18 +122,13 @@ export async function searchPodcasts(searchTerm: string): Promise<Podcast[]> {
 export async function getSongsByPlaylist(playlistId: number): Promise<Song[]> {
   const result = await query(
     `
-    SELECT s.id,
-           s.name,
-           s.duration,
-           s.icon,
-           s.data,
-           COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
+    SELECT s.*, COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
     FROM song s
     JOIN song_playlist sp ON s.id = sp.songid
     LEFT JOIN song_artist sa ON s.id = sa.songid
     LEFT JOIN artist a ON sa.artistid = a.id
     WHERE sp.playlistid = $1
-    GROUP BY s.id
+    GROUP BY s.id;
     `,
     [playlistId]
   );
@@ -139,12 +137,7 @@ export async function getSongsByPlaylist(playlistId: number): Promise<Song[]> {
 export async function getSongsByArtist(artistId: number): Promise<Song[]> {
   const result = await query(
     `
-    SELECT s.id,
-           s.name,
-           s.duration,
-           s.icon,
-           s.data,
-           COALESCE(string_agg(a2.name, ', '), '') AS "artistNames"
+    SELECT s.*, COALESCE(string_agg(a2.name, ', '), '') AS "artistNames"
     FROM song s
     JOIN song_artist sa1 ON s.id = sa1.songid
     JOIN artist a1 ON sa1.artistid = a1.id
@@ -160,12 +153,7 @@ export async function getSongsByArtist(artistId: number): Promise<Song[]> {
 export async function getSongsByAlbum(albumId: number): Promise<Song[]> {
   const result = await query(
     `
-    SELECT s.id,
-           s.name,
-           s.duration,
-           s.icon,
-           s.data,
-           COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
+    SELECT s.*, COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
     FROM song s
     JOIN album_song als ON s.id = als.songid
     LEFT JOIN song_artist sa ON s.id = sa.songid
@@ -190,7 +178,7 @@ export async function getPlaylistsByAccount(accountId: number): Promise<Playlist
 }
 export async function getArtistsByAccount(accountId: number): Promise<Artist[]> {
   const result = await query(
-    `SELECT artist.id, artist.name, artist.icon
+    `SELECT *
      FROM artist
      JOIN account_artist ON artist.id = account_artist.artistid
      WHERE account_artist.accountid = $1`,
@@ -201,11 +189,7 @@ export async function getArtistsByAccount(accountId: number): Promise<Artist[]> 
 export async function getAlbumsByAccount(accountId: number): Promise<Album[]> {
   const result = await query(
     `
-    SELECT al.id,
-           al.name,
-           al.icon,
-           al.year,
-           COALESCE(string_agg(ar.name, ', '), '') AS "artistNames"
+    SELECT al.*, COALESCE(string_agg(ar.name, ', '), '') AS "artistNames"
     FROM album al
     JOIN account_album aa ON al.id = aa.albumid
     LEFT JOIN album_artist ala ON al.id = ala.albumid
@@ -220,7 +204,7 @@ export async function getAlbumsByAccount(accountId: number): Promise<Album[]> {
 }
 export async function getPodcastsByAccount(accountId: number): Promise<Podcast[]> {
   const result = await query(
-    `SELECT podcast.id, podcast.name, podcast.description, podcast.duration, podcast.icon, podcast.data
+    `SELECT podcast.*
      FROM podcast
      JOIN account_podcast ON podcast.id = account_podcast.podcastid
      WHERE account_podcast.accountid = $1`,
@@ -231,12 +215,7 @@ export async function getPodcastsByAccount(accountId: number): Promise<Podcast[]
 export async function getSuggestedSongs(accountId: number, count: number): Promise<Song[]> {
   const result = await query(
     `
-    SELECT s.id,
-           s.name,
-           s.duration,
-           s.icon,
-           s.data,
-           COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
+    SELECT s.*, COALESCE(string_agg(a.name, ', '), '') AS "artistNames"
     FROM song s
     LEFT JOIN song_artist sa ON s.id = sa.songid
     LEFT JOIN artist a ON sa.artistid = a.id
